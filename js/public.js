@@ -115,6 +115,9 @@ const isSupabaseReady = () => typeof window.isSupabaseConfigured === "function"
 
 // Inisialisasi saat dokumen siap
 document.addEventListener("DOMContentLoaded", () => {
+  // Halaman Perkenalan (Intro Screen)
+  initIntroScreen();
+
   // Engine Tema (Gelap / Terang)
   initThemeEngine();
 
@@ -145,6 +148,92 @@ document.addEventListener("DOMContentLoaded", () => {
   // Muat Data (Dari Supabase atau Data Cadangan)
   loadSiteData();
 });
+
+/* ==========================================================================
+   HALAMAN PERKENALAN (EDITORIAL INTRO CURTAIN SCREEN)
+   ========================================================================== */
+function initIntroScreen() {
+  const intro = document.getElementById("introScreen");
+  const enterBtn = document.getElementById("introEnterBtn");
+  const replayBtn = document.getElementById("replayIntroBtn");
+
+  if (!intro) return;
+
+  // Kunci scroll halaman saat intro aktif
+  document.body.classList.add("intro-active");
+
+  function closeIntro() {
+    intro.classList.add("closing");
+    document.body.classList.remove("intro-active");
+    // Trigger scroll animations untuk section hero
+    setTimeout(() => {
+      window.dispatchEvent(new Event("scroll"));
+    }, 400);
+  }
+
+  function openIntro() {
+    intro.classList.remove("closing");
+    document.body.classList.add("intro-active");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  if (enterBtn) {
+    enterBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeIntro();
+    });
+  }
+
+  // Klik di luar kartu intro (backdrop) juga menutup intro
+  intro.addEventListener("click", (e) => {
+    if (e.target === intro || e.target.classList.contains("intro-ambient-glow")) {
+      closeIntro();
+    }
+  });
+
+  // Tombol keyboard (Enter, Spasi, Escape, Panah Bawah)
+  window.addEventListener("keydown", (e) => {
+    if (!intro.classList.contains("closing") && ["Enter", " ", "Escape", "ArrowDown"].includes(e.key)) {
+      closeIntro();
+    }
+  });
+
+  // Sentuhan gulir layar sentuh (Swipe up pada HP)
+  let touchStartY = 0;
+  intro.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  intro.addEventListener("touchend", (e) => {
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      const touchEndY = e.changedTouches[0].clientY;
+      if (touchStartY - touchEndY > 45) {
+        closeIntro();
+      }
+    }
+  }, { passive: true });
+
+  // Gulir mouse wheel
+  intro.addEventListener("wheel", (e) => {
+    if (e.deltaY > 15) {
+      closeIntro();
+    }
+  }, { passive: true });
+
+  // Tombol putar ulang intro di header
+  if (replayBtn) {
+    replayBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openIntro();
+    });
+  }
+
+  // Global helper
+  window.openIntroScreen = openIntro;
+  window.closeIntroScreen = closeIntro;
+}
 
 /* ==========================================================================
    ENGINE TEMA (GELAP & TERANG)
