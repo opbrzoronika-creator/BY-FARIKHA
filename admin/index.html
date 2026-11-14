@@ -111,14 +111,16 @@
 
       <!-- 3. Kelola Paket (Packages) -->
       <section class="admin-panel" id="packages">
-        <div class="panel-heading">
+        <div class="panel-heading" style="display:flex; justify-content:space-between; align-items:flex-end;">
           <div>
             <p class="eyebrow">PAKET LAYANAN</p>
             <h2>Kelola Paket & Harga</h2>
           </div>
+          <button class="btn btn-terracotta" type="button" id="btnNewPackage" onclick="openNewPackageForm()">+ Tambah Paket Baru</button>
         </div>
         <form id="packageForm" class="editor-form">
           <input type="hidden" id="packageId">
+          <h4 id="packageFormTitle" style="color:var(--champagne); margin-bottom:12px; font-size:14px; letter-spacing:1px;">+ Tambah Paket Baru</h4>
           <label>Nama Paket Layanan
             <input id="packageName" placeholder="Contoh: Paket Intimate Wedding" required>
           </label>
@@ -196,55 +198,96 @@
       <section class="admin-panel" id="reviews">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">TESTIMONI KLIEN</p>
-            <h2>Kelola Testimoni Klien</h2>
+            <p class="eyebrow">TESTIMONI KLIEN & KONSUMEN</p>
+            <h2>Kelola & Filter Ulasan Pengantin</h2>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Ulasan yang dikirim oleh pengantin/konsumen di website akan masuk ke sini. Anda dapat memfilter, menyetujui, menyembunyikan, atau menghapus ulasan.</p>
           </div>
         </div>
-        <form id="reviewForm" class="editor-form">
+
+        <!-- Filter Tab Ulasan -->
+        <div class="filter-tabs" style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="btn outline small active" id="tabRevAll" onclick="filterDashboardReviews('all')">Semua Ulasan (<span id="countRevAll">0</span>)</button>
+          <button type="button" class="btn outline small" id="tabRevPending" onclick="filterDashboardReviews('pending')" style="border-color:#cf6b42; color:#cf6b42; font-weight:600;">⏳ Menunggu Persetujuan (<span id="countRevPending">0</span>)</button>
+          <button type="button" class="btn outline small" id="tabRevApproved" onclick="filterDashboardReviews('approved')" style="border-color:#5cb85c; color:#5cb85c;">✓ Tampil di Web (<span id="countRevApproved">0</span>)</button>
+        </div>
+
+        <form id="reviewForm" class="editor-form" style="background:rgba(216,183,136,0.04); padding:20px; border-radius:3px; margin-bottom:20px;">
           <input type="hidden" id="reviewId">
+          <h4 id="reviewFormTitle" style="color:var(--champagne); margin-bottom:12px; font-size:13.5px; letter-spacing:1px;">+ Tambah / Edit Ulasan Manual</h4>
           <label>Nama Pasangan / Klien
             <input id="reviewName" required placeholder="Contoh: Nadya & Kevin">
+          </label>
+          <label>Kota / Lokasi Acara (Opsional)
+            <input id="reviewVenue" placeholder="Contoh: Hotel Royal Heritage, Solo">
           </label>
           <label>Isi Testimoni Klien
             <textarea id="reviewText" rows="3" required placeholder="Tuliskan pengalaman klien..."></textarea>
           </label>
           <label class="check">
-            <input id="reviewActive" type="checkbox" checked> Tampilkan di bagian ulasan website
+            <input id="reviewActive" type="checkbox" checked> Setujui & tampilkan di website publik
           </label>
           <div class="form-actions">
             <button class="btn btn-terracotta" type="submit" id="reviewSubmitBtn">Simpan Testimoni</button>
             <button class="btn btn-champagne-outline" type="button" id="resetReview">Kosongkan Formulir</button>
           </div>
         </form>
-        <div id="reviewList" class="admin-list" style="margin-top: 25px;"></div>
+        <div id="reviewList" class="admin-list"></div>
       </section>
 
       <!-- 6. Profil & Kontak Resmi (Site Settings) -->
       <section class="admin-panel" id="settings">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">IDENTITAS & KONTAK RESMI</p>
-            <h2>Profil & Kontak Website</h2>
+            <p class="eyebrow">IDENTITAS & PENGATURAN TEKS LENGKAP</p>
+            <h2>Kelola Seluruh Teks Website</h2>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Ubah seluruh teks judul, deskripsi, informasi iPhone, nomor WhatsApp, hingga kutipan footer langsung dari sini.</p>
           </div>
         </div>
         <form id="settingsForm" class="editor-form">
-          <label>Teks Utama Bagian Beranda (Hero)
-            <textarea id="settingHero" rows="2"></textarea>
-          </label>
-          <label>Deskripsi Bagian Tentang Kami (About)
-            <textarea id="settingAbout" rows="3"></textarea>
-          </label>
-          <label>Nomor WhatsApp Resmi (Contoh: 6281234567890)
-            <input id="settingWhatsApp" placeholder="628xxxxxxxxxx">
-          </label>
-          <label>Tautan Akun Instagram
-            <input id="settingInstagram" type="url" placeholder="https://www.instagram.com/wcc.byfariha/">
-          </label>
-          <label>Cakupan Wilayah Layanan
-            <textarea id="settingArea" rows="2"></textarea>
-          </label>
+          <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Bagian Beranda (Hero Section)</p>
+            
+            <label>Headline Judul Utama Beranda
+              <input id="settingHeroTitle" placeholder="Abadikan Janji Suci, Keanggunan Abadi.">
+            </label>
+            <label>Subjudul / Teks Deskripsi Beranda
+              <textarea id="settingHero" rows="2"></textarea>
+            </label>
+          </div>
+
+          <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Bagian Tentang Kami & Perangkat (About)</p>
+            
+            <label>Judul Bagian Tentang Kami
+              <input id="settingAboutTitle" placeholder="Sentuhan Editorial dalam Setiap Rekaman Emosi">
+            </label>
+            <label>Deskripsi Cerita Filosofi WCC.BYFARIHA
+              <textarea id="settingAbout" rows="3"></textarea>
+            </label>
+            <label>Keterangan Perangkat Eksklusif (iPhone)
+              <input id="settingDevice" placeholder="Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam">
+            </label>
+          </div>
+
+          <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Kontak & Wilayah Layanan</p>
+            
+            <label>Nomor WhatsApp Resmi (Contoh: 6281234567890)
+              <input id="settingWhatsApp" placeholder="628xxxxxxxxxx">
+            </label>
+            <label>Tautan Akun Instagram
+              <input id="settingInstagram" type="url" placeholder="https://www.instagram.com/wcc.byfariha/">
+            </label>
+            <label>Cakupan Wilayah Layanan
+              <textarea id="settingArea" rows="2"></textarea>
+            </label>
+            <label>Kutipan Puitis Footer
+              <textarea id="settingFooterQuote" rows="2" placeholder="“Mengabadikan keindahan kisah cinta Anda...”"></textarea>
+            </label>
+          </div>
+
           <div class="form-actions">
-            <button class="btn btn-terracotta" type="submit">Simpan Profil & Kontak</button>
+            <button class="btn btn-terracotta" type="submit" id="settingsSubmitBtn">Simpan Seluruh Pengaturan Teks</button>
           </div>
         </form>
       </section>

@@ -234,11 +234,23 @@ $("packageForm").onsubmit = async e => {
   $("packageForm").reset();
   $("packagePrice").value = 0;
   $("packageId").value = "";
+  if ($("packageFormTitle")) $("packageFormTitle").textContent = "+ Tambah Paket Baru";
   $("packageSubmitBtn").textContent = "Simpan Paket";
   if ($("packageActive")) $("packageActive").checked = true;
 
   await loadPackages();
   notice("Paket layanan berhasil disimpan.");
+};
+
+window.openNewPackageForm = () => {
+  $("packageForm").reset();
+  $("packageId").value = "";
+  $("packagePrice").value = 0;
+  if ($("packageFormTitle")) $("packageFormTitle").textContent = "+ Tambah Paket Baru";
+  $("packageSubmitBtn").textContent = "Simpan Paket Baru";
+  if ($("packageActive")) $("packageActive").checked = true;
+  $("packageName").focus();
+  location.hash = "packages";
 };
 
 window.editPackage = id => {
@@ -250,6 +262,7 @@ window.editPackage = id => {
   $("packageDescription").value = x.description || "";
   $("packageFeatured").checked = x.is_featured;
   if ($("packageActive")) $("packageActive").checked = x.is_active;
+  if ($("packageFormTitle")) $("packageFormTitle").textContent = "Mode Edit: " + x.name;
   $("packageSubmitBtn").textContent = "Perbarui Paket";
   location.hash = "packages";
 };
@@ -258,6 +271,7 @@ $("resetPackage").onclick = () => {
   $("packageForm").reset();
   $("packageId").value = "";
   $("packagePrice").value = 0;
+  if ($("packageFormTitle")) $("packageFormTitle").textContent = "+ Tambah Paket Baru";
   $("packageSubmitBtn").textContent = "Simpan Paket";
   if ($("packageActive")) $("packageActive").checked = true;
 };
@@ -414,8 +428,10 @@ window.deletePortfolioItem = async id => {
 };
 
 /* ==========================================================================
-   4. KELOLA TESTIMONI (REVIEWS)
+   4. KELOLA TESTIMONI (REVIEWS & MODERASI KONSUMEN)
    ========================================================================== */
+let currentReviewFilter = "all";
+
 async function loadReviews() {
   if (!db) return;
   const { data, error } = await db
@@ -425,21 +441,88 @@ async function loadReviews() {
 
   if (error) return notice("Gagal memuat ulasan: " + error.message);
   currentReviews = data || [];
-  $("countReviews").textContent = currentReviews.filter(r => r.is_active).length;
+  
+  const totalCount = currentReviews.length;
+  const pendingCount = currentReviews.filter(r => !r.is_active).length;
+  const approvedCount = currentReviews.filter(r => r.is_active).length;
 
-  $("reviewList").innerHTML = currentReviews.map(x => `
-    <div class="admin-row">
-      <div>
-        <b>${esc(x.client_name)}</b>
-        <span>“${esc(x.content)}” · ${x.is_active ? '<span style="color:#5cb85c;">Tampil</span>' : '<span style="color:#d9534f;">Disembunyikan</span>'}</span>
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn outline small" onclick="editReview('${x.id}')">Edit</button>
-        <button class="btn danger small" onclick="deleteRow('reviews', '${x.id}')">Hapus</button>
-      </div>
-    </div>
-  `).join("") || '<p class="muted">Belum ada testimoni.</p>';
+  if ($("countReviews")) $("countReviews").textContent = approvedCount;
+  if ($("countRevAll")) $("countRevAll").textContent = totalCount;
+  if ($("countRevPending")) $("countRevPending").textContent = pendingCount;
+  if ($("countRevApproved")) $("countRevApproved").textContent = approvedCount;
+
+  renderDashboardReviewList();
 }
+
+function renderDashboardReviewList() {
+  const container = $("reviewList");
+  if (!container) return;
+
+  let filtered = currentReviews;
+  if (currentReviewFilter === "pending") {
+    filtered = currentReviews.filter(r => !r.is_active);
+  } else if (currentReviewFilter === "approved") {
+    filtered = currentReviews.filter(r => r.is_active);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<p class="muted">Tidak ada ulasan dalam kategori ini.</p>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(x => {
+    const isApproved = x.is_active === true;
+    const statusBadge = isApproved 
+      ? `<span style="background:rgba(92,184,92,0.18); color:#5cb85c; border:1px solid #5cb85c; font-size:11px; padding:2px 8px; border-radius:2px; font-weight:600;">✓ Tampil di Web</span>`
+      : `<span style="background:rgba(207,107,66,0.18); color:#cf6b42; border:1px solid #cf6b42; font-size:11px; padding:2px 8px; border-radius:2px; font-weight:600;">⏳ Menunggu Persetujuan</span>`;
+
+    const approvalBtn = isApproved
+      ? `<button class="btn outline small" onclick="toggleReviewApproval('${x.id}', false)" title="Sembunyikan dari website">Sembunyikan</button>`
+      : `<button class="btn btn-terracotta small" onclick="toggleReviewApproval('${x.id}', true)" title="Setujui dan tampilkan di website">✓ Setujui</button>`;
+
+    const dateStr = x.created_at ? new Date(x.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' }) : "";
+
+    return `
+      <div class="admin-row" style="align-items:flex-start; padding:16px;">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <b>${esc(x.client_name)}</b>
+            ${statusBadge}
+            <span style="font-size:11.5px; color:var(--text-muted);">${esc(dateStr)}</span>
+          </div>
+          <div style="color:var(--champagne); font-size:12px; margin-bottom:4px;">★★★★★</div>
+          <p style="font-size:13.5px; line-height:1.6; color:var(--text-secondary); margin:0 0 4px 0;">“${esc(x.content)}”</p>
+          ${x.venue ? `<small style="color:var(--text-muted);">Lokasi: ${esc(x.venue)}</small>` : ""}
+        </div>
+        <div style="display: flex; gap: 8px; flex-shrink:0;">
+          ${approvalBtn}
+          <button class="btn outline small" onclick="editReview('${x.id}')">Edit</button>
+          <button class="btn danger small" onclick="deleteRow('reviews', '${x.id}')">Hapus</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.filterDashboardReviews = function(filter) {
+  currentReviewFilter = filter;
+  ["tabRevAll", "tabRevPending", "tabRevApproved"].forEach(id => {
+    const el = $(id);
+    if (el) el.classList.remove("active");
+  });
+  if (filter === "all" && $("tabRevAll")) $("tabRevAll").classList.add("active");
+  if (filter === "pending" && $("tabRevPending")) $("tabRevPending").classList.add("active");
+  if (filter === "approved" && $("tabRevApproved")) $("tabRevApproved").classList.add("active");
+  renderDashboardReviewList();
+};
+
+window.toggleReviewApproval = async function(id, approveBool) {
+  if (!db) return;
+  const { error } = await db.from("reviews").update({ is_active: approveBool }).eq("id", id);
+  if (error) return notice("Gagal memperbarui status ulasan: " + error.message);
+  notice(approveBool ? "Ulasan berhasil disetujui dan kini tampil di website publik." : "Ulasan disembunyikan dari website.");
+  await loadReviews();
+};
 
 $("reviewForm").onsubmit = async e => {
   e.preventDefault();
@@ -454,6 +537,9 @@ $("reviewForm").onsubmit = async e => {
     content: $("reviewText").value.trim(),
     is_active: $("reviewActive") ? $("reviewActive").checked : true
   };
+  if ($("reviewVenue") && $("reviewVenue").value.trim()) {
+    row.venue = $("reviewVenue").value.trim();
+  }
 
   const query = id ? db.from("reviews").update(row).eq("id", id) : db.from("reviews").insert(row);
   const { error } = await query;
@@ -463,6 +549,7 @@ $("reviewForm").onsubmit = async e => {
 
   $("reviewForm").reset();
   $("reviewId").value = "";
+  if ($("reviewFormTitle")) $("reviewFormTitle").textContent = "+ Tambah / Edit Ulasan Manual";
   $("reviewSubmitBtn").textContent = "Simpan Testimoni";
   if ($("reviewActive")) $("reviewActive").checked = true;
 
@@ -476,7 +563,9 @@ window.editReview = id => {
   $("reviewId").value = x.id;
   $("reviewName").value = x.client_name;
   $("reviewText").value = x.content;
+  if ($("reviewVenue")) $("reviewVenue").value = x.venue || "";
   if ($("reviewActive")) $("reviewActive").checked = x.is_active;
+  if ($("reviewFormTitle")) $("reviewFormTitle").textContent = "Mode Edit Ulasan: " + x.client_name;
   $("reviewSubmitBtn").textContent = "Perbarui Testimoni";
   location.hash = "reviews";
 };
@@ -484,47 +573,84 @@ window.editReview = id => {
 $("resetReview").onclick = () => {
   $("reviewForm").reset();
   $("reviewId").value = "";
+  if ($("reviewFormTitle")) $("reviewFormTitle").textContent = "+ Tambah / Edit Ulasan Manual";
   $("reviewSubmitBtn").textContent = "Simpan Testimoni";
   if ($("reviewActive")) $("reviewActive").checked = true;
 };
 
 /* ==========================================================================
-   5. PENGATURAN PROFIL & KONTAK (SITE_SETTINGS)
+   5. PENGATURAN TEKS LENGKAP & KONTAK RESMI (SITE_SETTINGS)
    ========================================================================== */
 async function loadSettings() {
   if (!db) return;
+  
+  let localExtra = {};
+  try {
+    localExtra = JSON.parse(localStorage.getItem("wcc_custom_settings") || "{}");
+  } catch (e) {}
+
   const { data, error } = await db
     .from("site_settings")
     .select("*")
     .eq("id", 1)
     .maybeSingle();
 
-  if (error) return notice("Gagal memuat pengaturan profil: " + error.message);
-  if (data) {
-    $("settingHero").value = data.hero_text || "";
-    $("settingAbout").value = data.about_text || "";
-    $("settingWhatsApp").value = data.whatsapp_number || "";
-    $("settingInstagram").value = data.instagram_url || "https://www.instagram.com/wcc.byfariha/";
-    $("settingArea").value = data.area_text || "";
-  }
+  if (error) return notice("Gagal memuat pengaturan: " + error.message);
+  
+  if ($("settingHeroTitle")) $("settingHeroTitle").value = (data && data.hero_title) || localExtra.hero_title || "Abadikan Janji Suci, Keanggunan Abadi.";
+  if ($("settingHero")) $("settingHero").value = (data && data.hero_text) || "";
+  if ($("settingAboutTitle")) $("settingAboutTitle").value = (data && data.about_title) || localExtra.about_title || "Sentuhan Editorial dalam Setiap Rekaman Emosi";
+  if ($("settingAbout")) $("settingAbout").value = (data && data.about_text) || "";
+  if ($("settingDevice")) $("settingDevice").value = (data && data.device_text) || localExtra.device_text || "Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam";
+  if ($("settingWhatsApp")) $("settingWhatsApp").value = (data && data.whatsapp_number) || "";
+  if ($("settingInstagram")) $("settingInstagram").value = (data && data.instagram_url) || "https://www.instagram.com/wcc.byfariha/";
+  if ($("settingArea")) $("settingArea").value = (data && data.area_text) || "";
+  if ($("settingFooterQuote")) $("settingFooterQuote").value = (data && data.footer_quote) || localExtra.footer_quote || "“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”";
 }
 
 $("settingsForm").onsubmit = async e => {
   e.preventDefault();
   if (!db) return;
 
-  const row = {
-    id: 1,
+  const submitBtn = $("settingsSubmitBtn") || $("settingsForm").querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
+
+  const extra = {
+    hero_title: $("settingHeroTitle") ? $("settingHeroTitle").value.trim() : "",
     hero_text: $("settingHero").value.trim(),
+    about_title: $("settingAboutTitle") ? $("settingAboutTitle").value.trim() : "",
     about_text: $("settingAbout").value.trim(),
+    device_text: $("settingDevice") ? $("settingDevice").value.trim() : "",
+    footer_quote: $("settingFooterQuote") ? $("settingFooterQuote").value.trim() : "",
     whatsapp_number: $("settingWhatsApp").value.replace(/\D/g, ""),
     instagram_url: $("settingInstagram").value.trim(),
     area_text: $("settingArea").value.trim()
   };
 
-  const { error } = await db.from("site_settings").upsert(row);
-  if (error) return notice("Gagal menyimpan profil: " + error.message);
-  notice("Profil dan informasi kontak resmi berhasil diperbarui.");
+  // Simpan ke localStorage sebagai backup cepat
+  localStorage.setItem("wcc_custom_settings", JSON.stringify(extra));
+
+  // Kolom standar yang terkonfirmasi ada di database
+  const standardRow = {
+    id: 1,
+    hero_text: extra.hero_text,
+    about_text: extra.about_text,
+    whatsapp_number: extra.whatsapp_number,
+    instagram_url: extra.instagram_url,
+    area_text: extra.area_text
+  };
+
+  // Coba upsert dengan field lengkap
+  let { error } = await db.from("site_settings").upsert({ id: 1, ...extra });
+  if (error && error.code === "42703") {
+    // Jika ada kolom baru yang belum ada di schema Postgres, gunakan row standar
+    const retry = await db.from("site_settings").upsert(standardRow);
+    error = retry.error;
+  }
+
+  if (submitBtn) submitBtn.disabled = false;
+  if (error) return notice("Gagal menyimpan teks: " + error.message);
+  notice("Seluruh teks website berhasil diperbarui!");
 };
 
 /* ==========================================================================

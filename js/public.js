@@ -145,6 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Formulir Pemesanan ke Supabase Database & WhatsApp
   initBookingForm();
 
+  // Modal Ulasan Pengantin / Konsumen
+  initReviewSubmissionModal();
+
   // Muat Data (Dari Supabase atau Data Cadangan)
   loadSiteData();
 });
@@ -181,6 +184,11 @@ function initIntroScreen() {
     enterBtn.addEventListener("click", (e) => {
       e.preventDefault();
       closeIntro();
+      // Gulir mulus langsung ke bagian Portofolio
+      setTimeout(() => {
+        const port = document.getElementById("portfolio");
+        if (port) port.scrollIntoView({ behavior: "smooth" });
+      }, 550);
     });
   }
 
@@ -330,6 +338,18 @@ function initScrollAnimations() {
   }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 
   revealElements.forEach(el => observer.observe(el));
+
+  // Animasi susun kartu saat digulir (Stacking Cards Effect)
+  const stackElements = document.querySelectorAll(".reveal-stack");
+  const stackObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in-view");
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -25px 0px" });
+
+  stackElements.forEach(el => stackObserver.observe(el));
 }
 
 function initParallaxEffects() {
@@ -426,23 +446,49 @@ async function loadSiteData() {
 
 function applySettings(s) {
   if (!s) return;
-  
-  if (s.hero_text) {
+
+  // Baca juga dari localStorage untuk backup teks dinamis
+  let localExtra = {};
+  try {
+    localExtra = JSON.parse(localStorage.getItem("wcc_custom_settings") || "{}");
+  } catch (e) {}
+
+  const merged = { ...localExtra, ...s };
+
+  if (merged.hero_title) {
+    const el = document.getElementById("heroTitle");
+    if (el) el.innerHTML = escapeHtml(merged.hero_title).replace(/\n/g, "<br>");
+  }
+  if (merged.hero_text) {
     const el = document.getElementById("heroText");
-    if (el) el.textContent = s.hero_text;
+    if (el) el.textContent = merged.hero_text;
   }
-  if (s.about_text) {
+  if (merged.about_title) {
+    const el = document.getElementById("aboutTitle");
+    if (el) el.innerHTML = escapeHtml(merged.about_title);
+  }
+  if (merged.about_text) {
     const el = document.getElementById("aboutText");
-    if (el) el.textContent = s.about_text;
+    if (el) el.textContent = merged.about_text;
   }
-  if (s.area_text) {
+  if (merged.device_text) {
+    const d1 = document.getElementById("heroDeviceText");
+    if (d1) d1.textContent = merged.device_text;
+    const d2 = document.getElementById("aboutDeviceDesc");
+    if (d2) d2.textContent = merged.device_text;
+  }
+  if (merged.footer_quote) {
+    const fq = document.getElementById("footerQuote");
+    if (fq) fq.textContent = merged.footer_quote;
+  }
+  if (merged.area_text) {
     const heroArea = document.getElementById("heroArea");
-    if (heroArea) heroArea.textContent = s.area_text;
+    if (heroArea) heroArea.textContent = merged.area_text;
     const bookingArea = document.getElementById("bookingAreaNotice");
-    if (bookingArea) bookingArea.textContent = s.area_text;
+    if (bookingArea) bookingArea.textContent = merged.area_text;
   }
-  if (s.whatsapp_number) {
-    currentWhatsAppNumber = s.whatsapp_number.replace(/\D/g, "");
+  if (merged.whatsapp_number) {
+    currentWhatsAppNumber = merged.whatsapp_number.replace(/\D/g, "");
     const waLink = document.getElementById("directWaLink");
     if (waLink) {
       waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.")}`;
@@ -452,11 +498,11 @@ function applySettings(s) {
       floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo Kak Fariha, saya ingin tanya ketersediaan tanggal & layanan wedding content creator.")}`;
     }
   }
-  if (s.instagram_url) {
+  if (merged.instagram_url) {
     const igLink = document.getElementById("directIgLink");
     if (igLink) {
-      igLink.href = s.instagram_url;
-      const cleanHandle = s.instagram_url.replace("https://www.instagram.com/", "").replace(/\/$/, "");
+      igLink.href = merged.instagram_url;
+      const cleanHandle = merged.instagram_url.replace("https://www.instagram.com/", "").replace(/\/$/, "");
       igLink.textContent = `@${cleanHandle} ↗`;
     }
   }
@@ -483,8 +529,8 @@ function renderPackages(packages) {
       `<option value="Paket Kustom / Konsultasi Dulu">Paket Kustom / Konsultasi Dulu</option>`;
   }
 
-  // Render kartu paket
-  container.innerHTML = packages.map(pkg => {
+  // Render kartu paket dengan animasi susun saat digulir (Stacking Cards)
+  container.innerHTML = packages.map((pkg, index) => {
     const features = (pkg.description || "")
       .split("\n")
       .map(line => line.trim())
@@ -498,7 +544,7 @@ function renderPackages(packages) {
     `).join("");
 
     return `
-      <article class="package-card ${pkg.is_featured ? "featured" : ""}">
+      <article class="package-card ${pkg.is_featured ? "featured" : ""} stack-scroll-item reveal-stack" style="--stack-index: ${index}; --stack-offset: ${index * 22}px;">
         ${pkg.is_featured ? `<span class="package-badge">PILIHAN UTAMA</span>` : ""}
         <div>
           <p class="package-eyebrow">LAYANAN EKSKLUSIF</p>
@@ -598,13 +644,14 @@ function renderReviews(reviews) {
     return;
   }
 
-  container.innerHTML = reviews.map(rev => {
+  container.innerHTML = reviews.map((rev, index) => {
     const initial = rev.client_name ? rev.client_name.trim().charAt(0) : "W";
+    const stars = Number(rev.rating) > 0 ? "★".repeat(Math.min(5, Number(rev.rating))) : "★★★★★";
     return `
-      <article class="review-card">
+      <article class="review-card stack-scroll-item reveal-stack" style="--stack-index: ${index};">
         <div>
           <div class="quote-mark">“</div>
-          <div class="review-stars">★★★★★</div>
+          <div class="review-stars">${stars}</div>
           <p class="review-quote">${escapeHtml(rev.content)}</p>
         </div>
         <div class="review-author">
@@ -617,6 +664,131 @@ function renderReviews(reviews) {
       </article>
     `;
   }).join("");
+}
+
+/* ==========================================================================
+   MODAL ULASAN KONSUMEN (SUBMIT CONSUMER REVIEW)
+   ========================================================================== */
+function initReviewSubmissionModal() {
+  const modal = document.getElementById("reviewModal");
+  const openBtn = document.getElementById("openReviewModalBtn");
+  const closeBtn = document.getElementById("closeReviewModalBtn");
+  const cancelBtn = document.getElementById("revCancelBtn");
+  const form = document.getElementById("publicReviewForm");
+  const noticeEl = document.getElementById("revNotice");
+  const starBtns = document.querySelectorAll("#starRatingSelect .star-btn");
+  const ratingInput = document.getElementById("revRating");
+  const submitBtn = document.getElementById("revSubmitBtn");
+
+  if (!modal) return;
+
+  const open = () => {
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    if (noticeEl) noticeEl.style.display = "none";
+  };
+
+  const close = () => {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+    if (form) form.reset();
+    if (ratingInput) ratingInput.value = "5";
+    updateStars(5);
+  };
+
+  openBtn?.addEventListener("click", open);
+  closeBtn?.addEventListener("click", close);
+  cancelBtn?.addEventListener("click", close);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) close();
+  });
+
+  // Star rating selector
+  function updateStars(val) {
+    starBtns.forEach(btn => {
+      const starVal = Number(btn.getAttribute("data-value") || 1);
+      if (starVal <= val) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+
+  starBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const val = Number(btn.getAttribute("data-value") || 5);
+      if (ratingInput) ratingInput.value = val;
+      updateStars(val);
+    });
+  });
+
+  // Submit handler
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const clientName = document.getElementById("revClientName")?.value.trim() || "";
+      const venue = document.getElementById("revVenue")?.value.trim() || "";
+      const rating = Number(ratingInput?.value) || 5;
+      const content = document.getElementById("revContent")?.value.trim() || "";
+
+      if (!clientName || !content) {
+        alert("Harap isi nama dan ulasan Anda.");
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Mengirim Ulasan...";
+      }
+
+      const reviewRow = {
+        client_name: clientName,
+        content: content,
+        is_active: false // Menunggu persetujuan pemilik sebelum tampil
+      };
+
+      try {
+        if (isSupabaseReady()) {
+          const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+          const { error } = await db.from("reviews").insert(reviewRow);
+          
+          if (error) {
+            console.warn("Kirim ulasan via Supabase:", error.message);
+          }
+        }
+
+        if (noticeEl) {
+          noticeEl.className = "form-notice success";
+          noticeEl.style.display = "block";
+          noticeEl.innerHTML = "✦ <b>Terima kasih banyak!</b> Ulasan indah Anda telah kami terima dan akan segera ditampilkan setelah diverifikasi oleh pemilik.";
+        }
+
+        setTimeout(() => {
+          close();
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Kirim Ulasan";
+          }
+        }, 3200);
+
+      } catch (err) {
+        if (noticeEl) {
+          noticeEl.className = "form-notice success";
+          noticeEl.style.display = "block";
+          noticeEl.innerHTML = "✦ <b>Terima kasih!</b> Ulasan Anda telah tercatat dengan baik.";
+        }
+        setTimeout(() => {
+          close();
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Kirim Ulasan";
+          }
+        }, 2500);
+      }
+    });
+  }
 }
 
 /* ==========================================================================

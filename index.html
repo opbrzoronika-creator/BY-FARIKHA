@@ -51,15 +51,15 @@
 
       <!-- 3 Quick Pillars -->
       <div class="intro-badges">
-        <span class="intro-badge-item">✦ 4K 60fps Sinematik</span>
+        <span class="intro-badge-item">✦ Eksklusif iPhone Pro 4K</span>
         <span class="intro-badge-item">✦ Pengiriman 24 Jam</span>
         <span class="intro-badge-item">✦ Nuansa Majalah Mewah</span>
       </div>
 
       <!-- Action Button -->
       <div class="intro-actions">
-        <button class="intro-enter-btn" id="introEnterBtn" type="button" aria-label="Buka Undangan Visual & Masuk ke Website">
-          <span class="btn-text">Buka Undangan Visual & Masuk</span>
+        <button class="intro-enter-btn" id="introEnterBtn" type="button" aria-label="Kunjungi Portofolio">
+          <span class="btn-text">KUNJUNGI PORTOFOLIO</span>
           <span class="btn-arrow">↓</span>
         </button>
         <span class="intro-hint-text">Ketuk tombol di atas atau gulir layar untuk melanjutkan</span>
@@ -138,7 +138,7 @@
             <span class="sparkle">✦</span>
           </div>
           
-          <h1 class="hero-title">
+          <h1 class="hero-title" id="heroTitle">
             Abadikan Janji Suci,<br>
             <em>Keanggunan Abadi.</em>
           </h1>
@@ -164,7 +164,7 @@
             </div>
             <div class="meta-item">
               <span class="meta-dot"></span>
-              <span class="meta-text">Kamera Flagship 4K 60fps HDR · Penyerahan File 24 Jam</span>
+              <span class="meta-text" id="heroDeviceText">Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam</span>
             </div>
           </div>
         </div>
@@ -227,7 +227,7 @@
         
         <div class="section-header text-center reveal-on-scroll">
           <p class="section-eyebrow">TENTANG WCC.BYFARIHA</p>
-          <h2 class="section-title">Sentuhan <em>Editorial</em> dalam Setiap Rekaman Emosi</h2>
+          <h2 class="section-title" id="aboutTitle">Sentuhan <em>Editorial</em> dalam Setiap Rekaman Emosi</h2>
           <p class="section-desc center-desc">
             Sebuah ruang di mana estetika visual berpadu dengan keaslian emosi momen sakral pernikahan Anda.
           </p>
@@ -254,8 +254,8 @@
               <div class="pillar-item">
                 <span class="pillar-num">02</span>
                 <div>
-                  <h4>Kualitas Sinematik 4K 60fps</h4>
-                  <p>Menggunakan gear flagship terbaik dengan resolusi tinggi, warna kulit natural, dan stabilisasi halus.</p>
+                  <h4 id="aboutDeviceTitle">Eksklusif iPhone Flagship (4K 60fps)</h4>
+                  <p id="aboutDeviceDesc">Menggunakan lini iPhone Pro terbaru untuk tangkapan warna kulit alami, stabilisasi sinematik, serta mobilitas tanpa batas yang tidak mengintimidasi pengantin.</p>
                 </div>
               </div>
               <div class="pillar-item">
@@ -278,7 +278,7 @@
               <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80" alt="Suasana Estetis WCC.BYFARIHA" class="about-img">
               <div class="about-stat-box">
                 <span class="stat-number">100%</span>
-                <span class="stat-label">Dedikasi Penuh & File Mentah Tanpa Batas</span>
+                <span class="stat-label">Eksklusif Rekaman iPhone Pro & File Mentah Tanpa Batas</span>
               </div>
             </div>
           </div>
@@ -366,6 +366,14 @@
             <span class="loading-spinner"></span>
             <p>Memuat testimoni klien...</p>
           </div>
+        </div>
+
+        <!-- Tombol Konsumen Beri Ulasan -->
+        <div class="review-cta-wrap reveal-on-scroll">
+          <p class="review-cta-prompt">Pernah mempercayakan momen bahagia Anda bersama kami?</p>
+          <button class="btn btn-champagne-outline" id="openReviewModalBtn" type="button">
+            ✦ Tulis Ulasan / Bagikan Pengalaman Anda
+          </button>
         </div>
 
       </div>
@@ -489,7 +497,7 @@
           </div>
         </div>
         <div class="footer-quote">
-          <p>“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”</p>
+          <p id="footerQuote">“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”</p>
         </div>
       </div>
 
@@ -501,6 +509,59 @@
       </div>
     </div>
   </footer>
+
+  <!-- ==============================================================================
+       MODAL ULASAN KONSUMEN (CONSUMER REVIEW SUBMISSION MODAL)
+       ============================================================================== -->
+  <div class="lightbox-modal review-modal-wrap" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle" style="display:none;">
+    <div class="review-modal-card">
+      <button class="modal-close" id="closeReviewModalBtn" aria-label="Tutup Formulir Ulasan">&times;</button>
+      
+      <div class="review-modal-header">
+        <span class="section-eyebrow">✦ KESAN & PENGALAMAN ANDA</span>
+        <h3 id="reviewModalTitle" class="review-modal-title">Bagikan Kisah <em>Pernikahan Anda</em></h3>
+        <p class="review-modal-desc">
+          Cerita berharga Anda sangat berarti bagi kami dan pasangan lainnya. Ulasan Anda akan ditinjau oleh pemilik sebelum ditampilkan di galeri ulasan.
+        </p>
+      </div>
+
+      <form id="publicReviewForm" class="review-modal-form">
+        <div class="form-group">
+          <label for="revClientName">Nama Pasangan / Pengantin *</label>
+          <input type="text" id="revClientName" placeholder="Contoh: Sarah & Danang" required>
+        </div>
+
+        <div class="form-group">
+          <label for="revVenue">Kota / Venue Acara (Opsional)</label>
+          <input type="text" id="revVenue" placeholder="Contoh: Grand Ballroom Hotel, Surabaya">
+        </div>
+
+        <div class="form-group">
+          <label>Tingkat Kepuasan Anda</label>
+          <div class="star-rating-select" id="starRatingSelect">
+            <button type="button" class="star-btn active" data-value="1" title="1 Bintang">★</button>
+            <button type="button" class="star-btn active" data-value="2" title="2 Bintang">★</button>
+            <button type="button" class="star-btn active" data-value="3" title="3 Bintang">★</button>
+            <button type="button" class="star-btn active" data-value="4" title="4 Bintang">★</button>
+            <button type="button" class="star-btn active" data-value="5" title="5 Bintang (Sempurna)">★</button>
+            <input type="hidden" id="revRating" value="5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="revContent">Ulasan / Pengalaman Bersama WCC.BYFARIHA *</label>
+          <textarea id="revContent" rows="4" placeholder="Ceritakan bagaimana tim WCC.BYFARIHA mendokumentasikan momen istimewa Anda..." required></textarea>
+        </div>
+
+        <div id="revNotice" class="form-notice" style="display:none;"></div>
+
+        <div class="review-modal-actions">
+          <button type="submit" class="btn btn-terracotta" id="revSubmitBtn">Kirim Ulasan</button>
+          <button type="button" class="btn btn-champagne-outline" id="revCancelBtn">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

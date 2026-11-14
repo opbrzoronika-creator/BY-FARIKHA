@@ -133,6 +133,12 @@ create policy "public read active reviews" on public.reviews
   for select to anon, authenticated 
   using (is_active = true);
 
+-- Konsumen dapat mengirimkan ulasan secara mandiri dari website publik
+drop policy if exists "public insert reviews" on public.reviews;
+create policy "public insert reviews" on public.reviews 
+  for insert to anon, authenticated 
+  with check (true);
+
 drop policy if exists "owner manage reviews" on public.reviews;
 create policy "owner manage reviews" on public.reviews 
   for all to authenticated 
@@ -232,3 +238,15 @@ Tersedia untuk Pernikahan Luar Kota & Luar Pulau', false, 3
 where not exists (select 1 from public.packages where sort_order = 3);
 
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
+
+-- ==============================================================================
+-- PENAMBAHAN KOLOM TEKS DINAMIS SITUS & FITUR ULASAN KONSUMEN
+-- ==============================================================================
+alter table public.site_settings add column if not exists hero_title text default 'Abadikan Janji Suci, Keanggunan Abadi.';
+alter table public.site_settings add column if not exists about_title text default 'Sentuhan Editorial dalam Setiap Rekaman Emosi';
+alter table public.site_settings add column if not exists device_text text default 'Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam';
+alter table public.site_settings add column if not exists footer_quote text default '“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”';
+
+alter table public.reviews add column if not exists venue text default '';
+alter table public.reviews add column if not exists rating int default 5;
+alter table public.reviews alter column is_active set default false;

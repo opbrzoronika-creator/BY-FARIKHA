@@ -2476,3 +2476,191 @@ body.intro-active {
     font-size: 12px;
   }
 }
+
+/* ==============================================================================
+   ANIMASI SUSUN SAAT GULIR (STACKING CARDS ON SCROLL)
+   ============================================================================== */
+.stack-scroll-item {
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, opacity 0.5s ease;
+}
+
+@media (min-width: 768px) {
+  .package-card.stacked {
+    position: sticky;
+    top: calc(110px + var(--stack-offset, 0px));
+    margin-bottom: 24px;
+    z-index: calc(10 + var(--stack-index, 0));
+  }
+
+  .package-card.stacked:hover {
+    z-index: 50;
+  }
+}
+
+/* Animasi tumpuk saat elemen memasuki viewport */
+.reveal-stack {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-stack.in-view {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ==============================================================================
+   MODAL ULASAN KONSUMEN & FORMULIR
+   ============================================================================== */
+.review-cta-wrap {
+  margin-top: 48px;
+  text-align: center;
+  padding: 36px 24px;
+  background: linear-gradient(180deg, rgba(216, 183, 136, 0.04) 0%, rgba(20, 18, 16, 0.55) 100%);
+  border: 1px dashed var(--champagne-border);
+  border-radius: 4px;
+}
+
+.review-cta-prompt {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.review-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 100002;
+  background: rgba(10, 9, 8, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.review-modal-card {
+  position: relative;
+  max-width: 580px;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--champagne-border);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85);
+  border-radius: 4px;
+  padding: 44px 36px;
+  color: var(--text-primary);
+  animation: introCardEntrance 0.35s ease-out;
+}
+
+.review-modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.review-modal-title {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3.2vw, 32px);
+  color: var(--text-primary);
+  margin: 6px 0 10px;
+}
+
+.review-modal-title em {
+  font-style: italic;
+  color: var(--champagne);
+}
+
+.review-modal-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.review-modal-form .form-group {
+  margin-bottom: 18px;
+}
+
+.review-modal-form label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--champagne);
+  margin-bottom: 6px;
+}
+
+.review-modal-form input,
+.review-modal-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-card);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color var(--duration-fast);
+}
+
+.review-modal-form input:focus,
+.review-modal-form textarea:focus {
+  outline: none;
+  border-color: var(--champagne);
+}
+
+.star-rating-select {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.star-btn {
+  background: transparent;
+  border: none;
+  color: #4a423a;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star-btn.active,
+.star-btn:hover {
+  color: #e5b95f;
+  transform: scale(1.15);
+}
+
+.review-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.review-modal-actions button {
+  flex: 1;
+}
+
+.form-notice {
+  padding: 12px;
+  border-radius: 2px;
+  font-size: 13px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.form-notice.success {
+  background: rgba(92, 184, 92, 0.15);
+  border: 1px solid rgba(92, 184, 92, 0.35);
+  color: #7bd37b;
+}
+
+.form-notice.error {
+  background: rgba(217, 83, 79, 0.15);
+  border: 1px solid rgba(217, 83, 79, 0.35);
+  color: #e67571;
+}
