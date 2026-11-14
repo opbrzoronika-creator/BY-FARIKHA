@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
-const ROOT_DIR = __dirname;
+const ROOT_DIR = path.join(__dirname, '..');
 
 // 1. Membaca Environment Variables dari .env lalu dioverride oleh .env.local
 function loadEnv() {
