@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | WCC.BYFARIHA</title>
+  <title>Dashboard Pemilik | WCC.BYFARIHA</title>
   
   <script>
     const savedTheme = localStorage.getItem("wcc_theme") || "dark";
@@ -23,12 +23,12 @@
       <span class="brand-monogram">F</span>
       <span class="brand-text">
         <span class="brand-title">WCC.<b>BYFARIHA</b></span>
-        <small class="brand-sub">OWNER DASHBOARD</small>
+        <small class="brand-sub">DASHBOARD PEMILIK</small>
       </span>
     </a>
     <div style="display: flex; gap: 10px; align-items: center;">
       <button class="theme-toggle" id="themeToggle" aria-label="Ganti Tema" title="Ganti Tema Gelap / Terang">
-        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
         <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       </button>
       <a class="btn btn-champagne-outline small" href="../index.html" target="_blank">Lihat Website ↗</a>
@@ -38,24 +38,24 @@
 
   <main class="dashboard">
     <aside class="admin-side">
-      <p class="eyebrow">MENU ADMIN</p>
-      <a href="#overview">✦ Ringkasan</a>
-      <a href="#packages">✦ Kelola Pricelist</a>
-      <a href="#portfolio">✦ Kelola Portfolio</a>
+      <p class="eyebrow">MENU UTAMA</p>
+      <a href="#overview">✦ Ringkasan Statistik</a>
+      <a href="#packages">✦ Kelola Paket Layanan</a>
+      <a href="#portfolio">✦ Kelola Portofolio</a>
       <a href="#reviews">✦ Kelola Testimoni</a>
-      <a href="#settings">✦ Profil & Kontak</a>
+      <a href="#settings">✦ Profil & Kontak Resmi</a>
     </aside>
 
     <div class="admin-content">
       <div class="dash-title">
         <div>
-          <p class="eyebrow">OWNER CONTROL PANEL</p>
+          <p class="eyebrow">PANEL KONTROL PEMILIK</p>
           <h1>Dashboard</h1>
         </div>
-        <span class="status-pill">Akses Pemilik</span>
+        <span class="status-pill">Akses Pemilik Aktif</span>
       </div>
 
-      <p id="adminNotice" class="notice">Memeriksa sesi dan status koneksi Supabase...</p>
+      <p id="adminNotice" class="notice">Memeriksa sesi login dan koneksi Supabase...</p>
 
       <!-- Overview Stats -->
       <section class="admin-panel" id="overview">
@@ -65,7 +65,7 @@
             <h2>Statistik Proyek</h2>
           </div>
         </div>
-        <p>Kelola harga, foto, video portofolio, review klien, dan nomor kontak langsung dari smartphone maupun PC Anda.</p>
+        <p>Kelola harga paket, foto, video portofolio, review klien, dan nomor kontak resmi langsung dari smartphone maupun PC Anda.</p>
         <div class="stats">
           <div>
             <b id="countPackages">—</b>
@@ -73,7 +73,7 @@
           </div>
           <div>
             <b id="countPortfolio">—</b>
-            <span>Portfolio</span>
+            <span>Portofolio</span>
           </div>
           <div>
             <b id="countReviews">—</b>
@@ -86,27 +86,27 @@
       <section class="admin-panel" id="packages">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">PRICELIST</p>
+            <p class="eyebrow">PAKET LAYANAN</p>
             <h2>Kelola Paket & Harga</h2>
           </div>
         </div>
         <form id="packageForm" class="editor-form">
           <input type="hidden" id="packageId">
-          <label>Nama paket
-            <input id="packageName" placeholder="Contoh: The Intimate Vow" required>
+          <label>Nama Paket Layanan
+            <input id="packageName" placeholder="Contoh: Paket Intimate Wedding" required>
           </label>
-          <label>Harga (Rp)
+          <label>Harga Paket (Rp)
             <input id="packagePrice" type="number" min="0" value="0" required>
           </label>
-          <label>Fasilitas / Deskripsi (Satu poin per baris)
-            <textarea id="packageDescription" rows="4" placeholder="Coverage 4-5 Jam&#10;1 Dedicated Content Creator&#10;All Raw Footage in 24h"></textarea>
+          <label>Fasilitas / Deskripsi Paket (Satu poin per baris)
+            <textarea id="packageDescription" rows="4" placeholder="Liputan 4–5 Jam&#10;1 Kreator Konten Khusus&#10;Semua File Mentah 4K dalam 24 Jam"></textarea>
           </label>
           <label class="check">
-            <input id="packageFeatured" type="checkbox"> Tandai sebagai paket unggulan (Recommended)
+            <input id="packageFeatured" type="checkbox"> Tandai sebagai paket rekomendasi utama (Pilihan Utama)
           </label>
           <div class="form-actions">
             <button class="btn btn-terracotta" type="submit">Simpan Paket</button>
-            <button class="btn btn-champagne-outline" type="button" id="resetPackage">Kosongkan Form</button>
+            <button class="btn btn-champagne-outline" type="button" id="resetPackage">Kosongkan Formulir</button>
           </div>
         </form>
         <div id="packageList" class="admin-list" style="margin-top: 25px;"></div>
@@ -116,28 +116,28 @@
       <section class="admin-panel" id="portfolio">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">GALLERY ARCHIVE</p>
-            <h2>Kelola Portfolio</h2>
+            <p class="eyebrow">ARSIP PORTOFOLIO</p>
+            <h2>Kelola Portofolio</h2>
           </div>
         </div>
         <form id="portfolioForm" class="editor-form">
           <label>Judul Dokumentasi
-            <input id="portfolioTitle" required placeholder="Contoh: The Royal Wedding of Dinda & Rama">
+            <input id="portfolioTitle" required placeholder="Contoh: Prosesi Akad Nikah Intim Dinda & Rama">
           </label>
           <label>Jenis Media
             <select id="portfolioType">
-              <option value="image">Foto (URL Gambar)</option>
-              <option value="video">Video (URL Tautan Video)</option>
+              <option value="image">Foto (Tautan URL Gambar)</option>
+              <option value="video">Video (Tautan URL Video)</option>
             </select>
           </label>
-          <label>URL Media Publik
+          <label>Tautan URL Media Publik
             <input id="portfolioUrl" type="url" placeholder="https://..." required>
           </label>
-          <label>Keterangan Singkat / Lokasi
-            <input id="portfolioDescription" placeholder="Contoh: Intimate Ceremony · Magetan">
+          <label>Keterangan Singkat / Lokasi Acara
+            <input id="portfolioDescription" placeholder="Contoh: Prosesi Akad Nikah · Magetan">
           </label>
           <div class="form-actions">
-            <button class="btn btn-terracotta" type="submit">Tambah ke Portfolio</button>
+            <button class="btn btn-terracotta" type="submit">Tambah ke Portofolio</button>
           </div>
         </form>
         <div id="portfolioList" class="admin-list" style="margin-top: 25px;"></div>
@@ -147,7 +147,7 @@
       <section class="admin-panel" id="reviews">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">CLIENT STORIES</p>
+            <p class="eyebrow">TESTIMONI KLIEN</p>
             <h2>Kelola Testimoni Klien</h2>
           </div>
         </div>
@@ -155,7 +155,7 @@
           <label>Nama Pasangan / Klien
             <input id="reviewName" required placeholder="Contoh: Nadya & Kevin">
           </label>
-          <label>Isi Testimoni
+          <label>Isi Testimoni Klien
             <textarea id="reviewText" rows="3" required placeholder="Tuliskan pengalaman klien..."></textarea>
           </label>
           <div class="form-actions">
@@ -169,15 +169,15 @@
       <section class="admin-panel" id="settings">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">BRAND & IDENTITY</p>
-            <h2>Profil & Kontak Resmi</h2>
+            <p class="eyebrow">IDENTITAS & KONTAK RESMI</p>
+            <h2>Profil & Kontak Website</h2>
           </div>
         </div>
         <form id="settingsForm" class="editor-form">
-          <label>Deskripsi Hero Halaman Utama
+          <label>Teks Utama Bagian Beranda (Hero)
             <textarea id="settingHero" rows="2"></textarea>
           </label>
-          <label>Deskripsi Bagian About
+          <label>Deskripsi Bagian Tentang Kami (About)
             <textarea id="settingAbout" rows="3"></textarea>
           </label>
           <label>Nomor WhatsApp Resmi (Contoh: 6281234567890)
@@ -186,7 +186,7 @@
           <label>Tautan Akun Instagram
             <input id="settingInstagram" type="url" placeholder="https://www.instagram.com/wcc.byfariha/">
           </label>
-          <label>Wilayah Layanan
+          <label>Cakupan Wilayah Layanan
             <textarea id="settingArea" rows="2"></textarea>
           </label>
           <div class="form-actions">
@@ -201,7 +201,6 @@
   <script src="../js/config.js"></script>
   <script src="../js/dashboard.js"></script>
   <script>
-    // Theme toggle handling in dashboard
     const themeBtn = document.getElementById("themeToggle");
     const sun = themeBtn?.querySelector(".sun-icon");
     const moon = themeBtn?.querySelector(".moon-icon");

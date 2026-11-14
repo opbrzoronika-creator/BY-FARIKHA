@@ -1,13 +1,13 @@
 /**
- * WCC.BYFARIHA — Luxury Editorial Wedding & Event Content Creator
- * Public Website Logic: Dynamic Data, Theme Engine (Dark & Light), Editorial Animations, Lightbox, & WhatsApp Booking
+ * WCC.BYFARIHA — Kreator Konten Pernikahan & Acara Eksklusif
+ * Logika Website Publik: Data Dinamis, Engine Tema Gelap & Terang, Animasi Parallax, Lightbox, & Generator WhatsApp
  */
 
-// Fallback Luxury Editorial Data (shown before Supabase is connected)
-const FALLBACK_DATA = {
+// Data Awal Eksklusif Berbahasa Indonesia (Ditampilkan sebelum Supabase terhubung)
+const DATA_AWAL = {
   settings: {
-    hero_text: "Mengabadikan setiap tatapan, senyuman, dan momen sakral hari bahagia Anda dalam balutan estetika editorial sinematik 4K.",
-    about_text: "WCC.BYFARIHA hadir untuk pasangan yang mendambakan dokumentasi pernikahan bernilai seni tinggi. Kami memadukan kehangatan momen intim dengan visual berkelas layaknya editorial majalah pernikahan dunia.",
+    hero_text: "Menangkap setiap tatapan, senyuman, dan momen sakral hari bahagia Anda dalam balutan estetika editorial sinematik 4K yang berkelas dan abadi.",
+    about_text: "WCC.BYFARIHA hadir untuk setiap pasangan yang menginginkan dokumentasi pernikahan bernilai seni tinggi. Kami memadukan kehangatan momen intim dengan visual berkelas layaknya editorial majalah pernikahan dunia.",
     whatsapp_number: "6285700000000",
     instagram_url: "https://www.instagram.com/wcc.byfariha/",
     area_text: "Magetan, Madiun, Solo, Surabaya & Seluruh Indonesia"
@@ -15,25 +15,25 @@ const FALLBACK_DATA = {
   packages: [
     {
       id: "pkg-1",
-      name: "The Intimate Vow",
+      name: "Paket Intimate Wedding",
       price: 2500000,
-      description: "Coverage 4-5 Jam (Akad / Pemberkatan)\n1 Creative Content Creator\n2 Edited Cinematic Reels (4K 60fps)\nAll Raw Videos & Photos Delivered in 24 Hours\nFlagship 4K Ultra HDR Gear\nOnline Private Gallery Drive",
+      description: "Liputan 4–5 Jam (Akad Nikah / Pemberkatan)\n1 Kreator Konten Berpengalaman\n2 Video Cinematic Reels Siap Tayang (4K 60fps HDR)\nSemua Video Mentah & Foto Diserahkan dalam 24 Jam\nPerangkat Flagship Kamera Ultra-Jernih\nTautan Galeri Pribadi Google Drive",
       is_featured: false,
       sort_order: 1
     },
     {
       id: "pkg-2",
-      name: "The Grand Elegance",
+      name: "Paket Grand Wedding (Full Day)",
       price: 4500000,
-      description: "Coverage Full Day (Up to 10 Jam: Prep to Reception)\n1 Dedicated Content Creator\n4 Edited Cinematic Reels (Teaser & Highlights)\nSame-Day Edit (1 Reel ready in 12h)\nExclusive Behind-The-Scenes Aesthetic Stills\nAll Uncompressed Raw Footage within 24 Hours\nDirect WhatsApp Creative Consultation",
+      description: "Liputan Penuh Hari H (Hingga 10 Jam: Persiapan s.d. Resepsi)\n1 Kreator Konten Khusus yang Dedikatif\n4 Video Cinematic Reels (Teaser & Sorotan Utama)\nSame-Day Edit (1 Video siap tayang dalam 12 jam)\nDokumentasi Estetis Di Balik Layar (Behind-the-Scenes)\nSeluruh File Mentah Tanpa Kompresi dalam 24 Jam\nKonsultasi Konsep Konten Langsung via WhatsApp",
       is_featured: true,
       sort_order: 2
     },
     {
       id: "pkg-3",
-      name: "The Editorial Affair",
+      name: "Paket Luxury Editorial (All-In)",
       price: 6800000,
-      description: "Comprehensive Full Day Coverage (Unlimited Hours)\n2 Creative Content Creators\n6 Edited Luxury Editorial Reels + 1 Long Form Reel\nSame-Day Edit (2 Reels ready on the day)\nComplete Behind-The-Scenes + Guest Interviews\nExclusive Color Graded Photo Carousel\nInstant Raw AirDrop / Hard Drive Transfer\nAvailable for Destination Wedding",
+      description: "Liputan Penuh Komprehensif (Waktu Fleksibel Tak Terbatas)\n2 Kreator Konten Profesional di Lokasi\n6 Video Reels Editorial Mewah + 1 Video Rekap Panjang\nSame-Day Edit (2 Video Reels siap posting di hari yang sama)\nDokumentasi Di Balik Layar Lengkap & Wawancara Tamu\nKoleksi Foto Carousel dengan Color Grading Majalah\nPenyerahan File Mentah Instan via AirDrop / Hard Drive\nTersedia untuk Pernikahan Luar Kota & Luar Pulau",
       is_featured: false,
       sort_order: 3
     }
@@ -41,45 +41,45 @@ const FALLBACK_DATA = {
   portfolio: [
     {
       id: "port-1",
-      title: "The Royal Classical Vows",
+      title: "Janji Suci di Hari Bahagia",
       type: "image",
       media_url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
-      description: "Intimate Ceremony · Magetan"
+      description: "Prosesi Akad Nikah Intim · Magetan"
     },
     {
       id: "port-2",
-      title: "Whispers of Sunlight",
+      title: "Kilau Cahaya Persiapan Pengantin",
       type: "image",
       media_url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80",
-      description: "Pre-Ceremony Moments · Solo"
+      description: "Momen Haru Pra-Acara · Solo"
     },
     {
       id: "port-3",
-      title: "Golden Hour Teaser Reel",
+      title: "Cuplikan Teaser Golden Hour",
       type: "video",
       media_url: "https://assets.mixkit.co/videos/preview/mixkit-bride-and-groom-embracing-outdoors-41221-large.mp4",
-      description: "Cinematic 4K Highlight Reel"
+      description: "Video Sorotan Sinematik 4K"
     },
     {
       id: "port-4",
-      title: "Sacred Ring Exchange",
+      title: "Detail Cincin & Busana Pengantin",
       type: "image",
       media_url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80",
-      description: "Aesthetic Details & Macro"
+      description: "Detail Makro Estetika Editorial"
     },
     {
       id: "port-5",
-      title: "The Evening Reception",
+      title: "Kemegahan Malam Resepsi",
       type: "video",
       media_url: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-bride-and-groom-holding-each-other-41220-large.mp4",
-      description: "Grand Ballroom Atmosphere"
+      description: "Suasana Hangat Grand Ballroom"
     },
     {
       id: "port-6",
-      title: "Candid Graceful Laughter",
+      title: "Tawa Spontan & Bahagia",
       type: "image",
       media_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80",
-      description: "Spontaneous Raw Emotions"
+      description: "Momen Candid Alami Penuh Emosi"
     }
   ],
   reviews: [
@@ -92,23 +92,23 @@ const FALLBACK_DATA = {
     {
       id: "rev-2",
       client_name: "Anindya & Fikri",
-      content: "Sangat bersyukur pilih Fariha. Timnya santun banget, nggak ganggu momen sakral sama sekali tapi semua momen haru dan detail kebaya sampai dekorasi terekam sempurna. Raw footagenya ratusan klip!",
-      venue: "Intimate Wedding Magetan"
+      content: "Sangat bersyukur pilih Kak Fariha. Timnya santun banget, nggak ganggu prosesi sakral sama sekali tapi semua momen haru dan detail kebaya sampai dekorasi terekam sempurna. Raw footagenya ratusan klip!",
+      venue: "Pernikahan Intim Magetan"
     },
     {
       id: "rev-3",
       client_name: "Claudia & Reza",
-      content: "Beda banget sama dokumentasi biasa. Ini beneran luxury editorial vibe, cinematic abis. Teman-teman pada kagum liat transisi dan audionya. Sangat worth every single penny!",
-      venue: "Royal Heritage Hotel"
+      content: "Beda banget sama dokumentasi biasa. Ini beneran luxury editorial vibe, transisi videonya halus dan pemilihan audionya pas banget. Teman-teman pada nanyain siapa yang bikin!",
+      venue: "Hotel Royal Heritage"
     }
   ]
 };
 
-let currentWhatsAppNumber = FALLBACK_DATA.settings.whatsapp_number;
+let currentWhatsAppNumber = DATA_AWAL.settings.whatsapp_number;
 let loadedPackages = [];
 let allPortfolioItems = [];
 
-// Check if Supabase keys are configured
+// Memeriksa apakah Supabase telah dikonfigurasi
 const isSupabaseReady = () => {
   return window.SUPABASE_URL && 
          window.SUPABASE_ANON_KEY && 
@@ -116,41 +116,47 @@ const isSupabaseReady = () => {
          !window.SUPABASE_ANON_KEY.includes("PASTE_");
 };
 
-// Initialize app
+// Inisialisasi saat dokumen siap
 document.addEventListener("DOMContentLoaded", () => {
-  // Theme Engine (Dark / Light)
+  // Engine Tema (Gelap / Terang)
   initThemeEngine();
 
-  // Footer year
+  // Tahun Hak Cipta di Footer
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Navigation Mobile Toggle
+  // Batasi tanggal minimal di input tanggal acara (tidak bisa memilih tanggal lampau)
+  const dateInput = document.getElementById("bookingDate");
+  if (dateInput) {
+    const today = new Date().toISOString().split("T")[0];
+    dateInput.min = today;
+  }
+
+  // Navigasi & Menu Mobile
   initNavigation();
 
-  // Animations & Parallax
+  // Animasi Muncul Halus & Parallax
   initScrollAnimations();
   initParallaxEffects();
 
-  // Lightbox Modal
+  // Lightbox Modal Portofolio
   initLightbox();
 
-  // Booking Form Submission
+  // Formulir Pemesanan ke WhatsApp
   initBookingForm();
 
-  // Load Data (Supabase or Fallback)
+  // Muat Data (Dari Supabase atau Data Cadangan)
   loadSiteData();
 });
 
 /* ==========================================================================
-   THEME ENGINE (DARK & LIGHT MODE)
+   ENGINE TEMA (GELAP & TERANG)
    ========================================================================== */
 function initThemeEngine() {
   const themeToggle = document.getElementById("themeToggle");
   const sunIcon = themeToggle?.querySelector(".sun-icon");
   const moonIcon = themeToggle?.querySelector(".moon-icon");
 
-  // Determine initial theme: saved preference -> system preference -> default dark
   const savedTheme = localStorage.getItem("wcc_theme");
   let currentTheme = savedTheme;
 
@@ -169,13 +175,14 @@ function initThemeEngine() {
       if (theme === "light") {
         sunIcon.style.display = "none";
         moonIcon.style.display = "block";
+        themeToggle.setAttribute("title", "Ganti ke Mode Gelap");
       } else {
         sunIcon.style.display = "block";
         moonIcon.style.display = "none";
+        themeToggle.setAttribute("title", "Ganti ke Mode Terang");
       }
     }
 
-    // Update meta theme-color for mobile address bar
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
       metaThemeColor.setAttribute("content", theme === "light" ? "#faf7f2" : "#121110");
@@ -191,7 +198,7 @@ function initThemeEngine() {
 }
 
 /* ==========================================================================
-   NAVIGATION
+   NAVIGASI
    ========================================================================== */
 function initNavigation() {
   const menuToggle = document.getElementById("menuToggle");
@@ -204,7 +211,6 @@ function initNavigation() {
       navMenu.classList.toggle("open");
     });
 
-    // Close menu when clicking nav links
     navMenu.querySelectorAll(".nav-link").forEach(link => {
       link.addEventListener("click", () => {
         menuToggle.classList.remove("active");
@@ -213,7 +219,6 @@ function initNavigation() {
     });
   }
 
-  // Header background on scroll
   window.addEventListener("scroll", () => {
     if (window.scrollY > 40) {
       siteHeader?.classList.add("scrolled");
@@ -224,7 +229,7 @@ function initNavigation() {
 }
 
 /* ==========================================================================
-   SCROLL REVEALS & PARALLAX
+   ANIMASI SCROLL & PARALLAX
    ========================================================================== */
 function initScrollAnimations() {
   const revealElements = document.querySelectorAll(".reveal-on-scroll");
@@ -253,7 +258,6 @@ function initParallaxEffects() {
       window.requestAnimationFrame(() => {
         const scrolled = window.scrollY;
 
-        // Subtle ambient glow parallax
         if (glow1) {
           glow1.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
         }
@@ -261,7 +265,6 @@ function initParallaxEffects() {
           glow2.style.transform = `translate3d(0, ${-scrolled * 0.07}px, 0)`;
         }
 
-        // Hero Frame slow parallax
         if (heroParallaxFrame && scrolled < 900) {
           heroParallaxFrame.style.transform = `translate3d(0, ${scrolled * 0.06}px, 0)`;
         }
@@ -274,7 +277,7 @@ function initParallaxEffects() {
 }
 
 /* ==========================================================================
-   DATA LOADING (SUPABASE OR FALLBACK)
+   MEMUAT DATA DARI DATABASE / DATA AWAL
    ========================================================================== */
 async function loadSiteData() {
   if (isSupabaseReady()) {
@@ -288,51 +291,51 @@ async function loadSiteData() {
         db.from("site_settings").select("*").eq("id", 1).maybeSingle()
       ]);
 
-      // Packages
+      // Paket
       if (!packagesRes.error && packagesRes.data && packagesRes.data.length > 0) {
         loadedPackages = packagesRes.data;
       } else {
-        loadedPackages = FALLBACK_DATA.packages;
+        loadedPackages = DATA_AWAL.packages;
       }
       renderPackages(loadedPackages);
 
-      // Portfolio
+      // Portofolio
       if (!portfolioRes.error && portfolioRes.data && portfolioRes.data.length > 0) {
         allPortfolioItems = portfolioRes.data;
       } else {
-        allPortfolioItems = FALLBACK_DATA.portfolio;
+        allPortfolioItems = DATA_AWAL.portfolio;
       }
       renderPortfolio(allPortfolioItems);
       initPortfolioFilters();
 
-      // Reviews
+      // Ulasan
       if (!reviewsRes.error && reviewsRes.data && reviewsRes.data.length > 0) {
         renderReviews(reviewsRes.data);
       } else {
-        renderReviews(FALLBACK_DATA.reviews);
+        renderReviews(DATA_AWAL.reviews);
       }
 
-      // Settings
+      // Pengaturan Situs
       if (!settingsRes.error && settingsRes.data) {
         applySettings(settingsRes.data);
       } else {
-        applySettings(FALLBACK_DATA.settings);
+        applySettings(DATA_AWAL.settings);
       }
 
       return;
     } catch (err) {
-      console.warn("Supabase query error, fallback loaded:", err);
+      console.warn("Koneksi Supabase tertunda, menampilkan data default:", err);
     }
   }
 
-  // If Supabase not connected yet, render fallback luxury starter content
-  loadedPackages = FALLBACK_DATA.packages;
-  allPortfolioItems = FALLBACK_DATA.portfolio;
+  // Jika Supabase belum diisi, tampilkan data awal yang rapi dan elegan
+  loadedPackages = DATA_AWAL.packages;
+  allPortfolioItems = DATA_AWAL.portfolio;
   renderPackages(loadedPackages);
   renderPortfolio(allPortfolioItems);
   initPortfolioFilters();
-  renderReviews(FALLBACK_DATA.reviews);
-  applySettings(FALLBACK_DATA.settings);
+  renderReviews(DATA_AWAL.reviews);
+  applySettings(DATA_AWAL.settings);
 }
 
 function applySettings(s) {
@@ -355,7 +358,13 @@ function applySettings(s) {
   if (s.whatsapp_number) {
     currentWhatsAppNumber = s.whatsapp_number.replace(/\D/g, "");
     const waLink = document.getElementById("directWaLink");
-    if (waLink) waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.")}`;
+    if (waLink) {
+      waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.")}`;
+    }
+    const floatWa = document.getElementById("floatingWaBtn");
+    if (floatWa) {
+      floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo Kak Fariha, saya ingin tanya ketersediaan tanggal & layanan wedding content creator.")}`;
+    }
   }
   if (s.instagram_url) {
     const igLink = document.getElementById("directIgLink");
@@ -368,7 +377,7 @@ function applySettings(s) {
 }
 
 /* ==========================================================================
-   RENDER PACKAGES
+   MENAMPILKAN PAKET LAYANAN
    ========================================================================== */
 function renderPackages(packages) {
   const container = document.getElementById("packageGrid");
@@ -381,14 +390,14 @@ function renderPackages(packages) {
     return;
   }
 
-  // Populate booking dropdown
+  // Isi dropdown pilihan paket pada formulir pemesanan
   if (selectBox) {
     selectBox.innerHTML = `<option value="" disabled selected>Pilih salah satu paket...</option>` +
       packages.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${formatRupiah(p.price)})</option>`).join("") +
-      `<option value="Paket Kustom / Lainnya">Paket Kustom / Konsultasi Dulu</option>`;
+      `<option value="Paket Kustom / Konsultasi Dulu">Paket Kustom / Konsultasi Dulu</option>`;
   }
 
-  // Render cards
+  // Render kartu paket
   container.innerHTML = packages.map(pkg => {
     const features = (pkg.description || "")
       .split("\n")
@@ -404,9 +413,9 @@ function renderPackages(packages) {
 
     return `
       <article class="package-card ${pkg.is_featured ? "featured" : ""}">
-        ${pkg.is_featured ? `<span class="package-badge">RECOMMENDED</span>` : ""}
+        ${pkg.is_featured ? `<span class="package-badge">PILIHAN UTAMA</span>` : ""}
         <div>
-          <p class="package-eyebrow">WCC.BYFARIHA EXPERIENCES</p>
+          <p class="package-eyebrow">LAYANAN EKSKLUSIF</p>
           <h3 class="package-title">${escapeHtml(pkg.name)}</h3>
           <div class="package-price">${formatRupiah(pkg.price)}</div>
           
@@ -424,7 +433,7 @@ function renderPackages(packages) {
   }).join("");
 }
 
-// Global action to select package and scroll to booking form
+// Fungsi global untuk memilih paket dan scroll otomatis ke formulir booking
 window.selectPackageForBooking = function(pkgName) {
   const selectBox = document.getElementById("bookingPackage");
   if (selectBox) {
@@ -439,7 +448,7 @@ window.selectPackageForBooking = function(pkgName) {
 };
 
 /* ==========================================================================
-   RENDER PORTFOLIO & FILTERS
+   MENAMPILKAN PORTOFOLIO & FILTER
    ========================================================================== */
 function renderPortfolio(items, filter = "all") {
   const container = document.getElementById("portfolioGrid");
@@ -456,24 +465,23 @@ function renderPortfolio(items, filter = "all") {
     const isVideo = item.type === "video";
     const mediaUrl = safeUrl(item.media_url);
 
-    // If video, use wedding poster thumbnail
     const thumbUrl = isVideo 
       ? "https://images.unsplash.com/photo-1519225424982-f5f73c68df8e?auto=format&fit=crop&w=800&q=80" 
       : mediaUrl;
 
     return `
-      <div class="portfolio-card" onclick="openLightbox(${index}, '${filter}')">
+      <div class="portfolio-card" onclick="openLightbox(${index}, '${filter}')" title="Klik untuk melihat karya">
         <img src="${thumbUrl}" alt="${escapeHtml(item.title)}" loading="lazy">
         
         <span class="portfolio-type-pill">
-          ${isVideo ? "<span>▶</span> VIDEO REELS" : "<span>✦</span> PHOTO"}
+          ${isVideo ? "<span>▶</span> VIDEO REELS" : "<span>✦</span> FOTO"}
         </span>
 
         ${isVideo ? `<div class="video-play-badge">▶</div>` : ""}
 
         <div class="portfolio-overlay">
           <h3 class="portfolio-title">${escapeHtml(item.title)}</h3>
-          <p class="portfolio-caption">${escapeHtml(item.description || "Wedding Archive")}</p>
+          <p class="portfolio-caption">${escapeHtml(item.description || "Dokumentasi Pernikahan")}</p>
         </div>
       </div>
     `;
@@ -493,7 +501,7 @@ function initPortfolioFilters() {
 }
 
 /* ==========================================================================
-   RENDER REVIEWS
+   MENAMPILKAN ULASAN KLIEN
    ========================================================================== */
 function renderReviews(reviews) {
   const container = document.getElementById("reviewGrid");
@@ -517,7 +525,7 @@ function renderReviews(reviews) {
           <div class="author-monogram">${escapeHtml(initial)}</div>
           <div>
             <span class="author-name">${escapeHtml(rev.client_name)}</span>
-            <span class="author-venue">${escapeHtml(rev.venue || "Wedding Client")}</span>
+            <span class="author-venue">${escapeHtml(rev.venue || "Klien Pernikahan")}</span >
           </div>
         </div>
       </article>
@@ -526,7 +534,7 @@ function renderReviews(reviews) {
 }
 
 /* ==========================================================================
-   LIGHTBOX MODAL
+   MODAL LIGHTBOX
    ========================================================================== */
 function initLightbox() {
   const modal = document.getElementById("mediaLightbox");
@@ -568,7 +576,7 @@ window.openLightbox = function(index, filter) {
     modalBody.innerHTML = `
       <video controls autoplay playsinline style="max-height: 74vh; width: 100%;">
         <source src="${safeMedia}" type="video/mp4">
-        Browser Anda tidak mendukung tag video. Silakan buka tautan: <a href="${safeMedia}" target="_blank" style="color:var(--champagne)">Buka Video</a>
+        Browser Anda tidak mendukung pemutar video. Silakan buka tautan: <a href="${safeMedia}" target="_blank" style="color:var(--champagne)">Tonton Video</a>
       </video>
     `;
   } else {
@@ -584,7 +592,7 @@ window.openLightbox = function(index, filter) {
 };
 
 /* ==========================================================================
-   BOOKING FORM TO WHATSAPP
+   FORMULIR RESERVASI KE WHATSAPP RESMI
    ========================================================================== */
 function initBookingForm() {
   const form = document.getElementById("bookingForm");
@@ -600,7 +608,7 @@ function initBookingForm() {
     const pkg = document.getElementById("bookingPackage")?.value || "Paket Belum Dipilih";
     const notes = document.getElementById("bookingNotes")?.value.trim() || "-";
 
-    // Format readable Indonesian date
+    // Format tanggal Indonesia yang anggun dan rapi
     let formattedDate = date;
     if (date) {
       try {
@@ -616,21 +624,21 @@ function initBookingForm() {
       }
     }
 
-    // Build Luxury Editorial WhatsApp Message
+    // Susun Pesan WhatsApp yang Formal, Rapi, & Elegan
     const message = 
-`✦ *RESERVASI WEDDING CONTENT CREATOR — WCC.BYFARIHA* ✦
+`✦ *RESERVASI KONTEN PERNIKAHAN — WCC.BYFARIHA* ✦
 
 Halo Kak Fariha & Tim WCC.BYFARIHA, saya ingin reservasi tanggal dan konsultasi paket dokumentasi:
 
 • *Nama Pasangan / Klien:* ${name}
 • *Nomor WhatsApp:* ${clientWa}
 • *Tanggal Acara:* ${formattedDate}
-• *Lokasi / Venue:* ${location}
+• *Kota & Venue:* ${location}
 • *Pilihan Paket:* ${pkg}
 • *Catatan / Konsep Acara:*
 "${notes}"
 
-Mohon informasi ketersediaan slot tanggal dan detail selanjutnya. Terima kasih! ✨`;
+Mohon informasi ketersediaan slot tanggal dan rincian selanjutnya. Terima kasih! ✨`;
 
     const encoded = encodeURIComponent(message);
     const waUrl = `https://wa.me/${currentWhatsAppNumber}?text=${encoded}`;
@@ -640,10 +648,10 @@ Mohon informasi ketersediaan slot tanggal dan detail selanjutnya. Terima kasih! 
 }
 
 /* ==========================================================================
-   HELPERS & SANITIZERS
+   BANTUAN FORMAT & KEAMANAN
    ========================================================================== */
 function formatRupiah(number) {
-  if (number === 0 || !number) return "Konsultasi / Sesuai Jadwal";
+  if (number === 0 || !number) return "Konsultasi / Jadwal Khusus";
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
