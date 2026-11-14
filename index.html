@@ -1,24 +1,417 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f4eee7"><meta name="description" content="WCC.BYFARIHA — Wedding & Event Content Creator. Your Moment Is Our Priority.">
-<title>WCC.BYFARIHA | Wedding & Event Content Creator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#121110">
+  <meta name="description" content="WCC.BYFARIHA — Luxury Editorial Wedding & Event Content Creator. Capturing sacred vows, raw emotions, and timeless elegance in cinematic 4K.">
+  <title>WCC.BYFARIHA | Luxury Editorial Wedding Content Creator</title>
+  
+  <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-<header class="site-header"><a class="brand" href="#home"><span class="brand-mark">F</span><span>WCC.<b>BYFARIHA</b><small>WEDDING & EVENT CONTENT CREATOR</small></span></a>
-<button class="menu-toggle" aria-label="Buka menu">☰</button><nav id="nav"><a href="#about">About</a><a href="#services">Services</a><a href="#packages">Packages</a><a href="#portfolio">Portfolio</a><a href="#reviews">Reviews</a><a class="nav-cta" href="#contact">Book Now</a></nav></header>
-<main>
-<section class="hero" id="home"><div class="hero-copy"><p class="eyebrow">WEDDING & EVENT CONTENT CREATOR</p><h1>Your Moment,<br><em>Our Priority.</em></h1><p class="lead" id="heroText">Mengabadikan momen istimewa menjadi cerita indah yang bisa dikenang selamanya.</p><div class="actions"><a class="btn primary" href="#contact">Konsultasi & Booking</a><a class="btn outline" href="#portfolio">Lihat Portfolio</a></div><p class="location-line">MAGETAN · JAWA TIMUR · JAWA TENGAH</p></div><div class="hero-art"><div class="hero-photo photo-placeholder"><span>YOUR BEAUTIFUL MOMENTS</span><small>Foto utama dapat diganti melalui Dashboard Admin</small></div><div class="hero-stamp">WEDDING<br>MEMORIES<br>✦</div></div></section>
-<section class="intro section" id="about"><p class="eyebrow">A LITTLE INTRODUCTION</p><h2>Every love story<br><em>deserves to be remembered.</em></h2><p id="aboutText" class="narrow">WCC.BYFARIHA hadir untuk menangkap detail, emosi, dan momen berharga di hari spesialmu melalui konten wedding yang hangat dan berkesan.</p><div class="signature">WCC.BYFARIHA</div></section>
-<section class="section soft" id="services"><div class="section-heading"><div><p class="eyebrow">WHAT WE DO</p><h2>Our Services</h2></div><p>Konten yang menangkap cerita di balik hari istimewamu.</p></div><div class="service-grid"><article class="service-card"><span>01</span><h3>Wedding Day Content</h3><p>Dokumentasi momen dan suasana acara pernikahan.</p></article><article class="service-card"><span>02</span><h3>Behind The Scenes</h3><p>Persiapan, detail, dan momen spontan di balik layar.</p></article><article class="service-card"><span>03</span><h3>Wedding & Event</h3><p>Konten untuk berbagai momen dan acara spesial.</p></article></div></section>
-<section class="section" id="packages"><div class="section-heading"><div><p class="eyebrow">CHOOSE YOUR EXPERIENCE</p><h2>Our Packages</h2></div><p>Detail paket dan harga dapat berubah sesuai informasi terbaru.</p></div><div id="packageGrid" class="package-grid"><p class="muted">Memuat paket...</p></div></section>
-<section class="section soft" id="portfolio"><div class="section-heading"><div><p class="eyebrow">SELECTED MOMENTS</p><h2>Our Portfolio</h2></div><p>Beberapa cerita yang pernah kami abadikan.</p></div><div id="portfolioGrid" class="portfolio-grid"><div class="empty-tile">Portfolio akan segera hadir.</div></div></section>
-<section class="section" id="reviews"><div class="section-heading"><div><p class="eyebrow">KIND WORDS</p><h2>Client Reviews</h2></div><p>Cerita dan pengalaman dari klien.</p></div><div id="reviewGrid" class="review-grid"><p class="muted">Testimoni akan segera hadir.</p></div></section>
-<section class="contact section" id="contact"><p class="eyebrow">LET'S CREATE MEMORIES</p><h2>Tell us about<br><em>your special day.</em></h2><p id="contactText">Ceritakan rencana hari spesialmu. Kami siap membantu mengabadikan momen berharga.</p><a class="btn light" id="waButton" href="https://wa.me/" target="_blank" rel="noopener">Hubungi via WhatsApp</a><p class="contact-social" id="socialText">@wcc.byfariha · Magetan dan sekitarnya</p></section>
-</main><footer><span>© <span id="year"></span> WCC.BYFARIHA</span><span>Your Moment Is Our Priority.</span><a href="admin/login.html">Admin</a></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/public.js"></script>
-</body></html>
+<body class="editorial-body">
+
+  <!-- Ambient Decorative Background Layers for Slow Parallax -->
+  <div class="ambient-glow glow-terracotta" id="glow1"></div>
+  <div class="ambient-glow glow-champagne" id="glow2"></div>
+
+  <!-- Header / Navigation -->
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="#home">
+      <span class="brand-monogram">F</span>
+      <span class="brand-text">
+        <span class="brand-title">WCC.<b>BYFARIHA</b></span>
+        <small class="brand-sub">LUXURY EDITORIAL WEDDING</small>
+      </span>
+    </a>
+    
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="nav" class="nav-menu">
+      <a href="#home" class="nav-link">Beranda</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#pricelist" class="nav-link">Pricelist</a>
+      <a href="#portfolio" class="nav-link">Portfolio</a>
+      <a href="#reviews" class="nav-link">Reviews</a>
+      <a href="#booking" class="nav-link nav-btn-cta">Booking Now</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 1. BERANDA (HERO SECTION) -->
+    <section class="hero-section" id="home">
+      <div class="hero-inner">
+        
+        <div class="hero-content reveal-on-scroll">
+          <div class="eyebrow-badge">
+            <span class="sparkle">✦</span>
+            <span>WEDDING & EVENT CONTENT CREATOR</span>
+            <span class="sparkle">✦</span>
+          </div>
+          
+          <h1 class="hero-title">
+            Capturing Sacred Vows,<br>
+            <em>Timeless Elegance.</em>
+          </h1>
+          
+          <p class="hero-lead" id="heroText">
+            Mengabadikan getaran cinta, detail kemewahan, dan emosi jujur di hari pernikahan Anda menjadi visual sinematik 4K bergaya luxury editorial yang abadi.
+          </p>
+          
+          <div class="hero-actions">
+            <a class="btn btn-terracotta" href="#booking">
+              <span>Konsultasi & Booking</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a class="btn btn-champagne-outline" href="#portfolio">
+              <span>Eksplorasi Galeri</span>
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-item">
+              <span class="meta-dot"></span>
+              <span class="meta-text" id="heroArea">Magetan · Madiun · Solo · Seluruh Indonesia</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-dot"></span>
+              <span class="meta-text">iPhone 4K 60fps Ultra HDR · 24H Delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal-on-scroll" style="animation-delay: 0.2s;">
+          <div class="hero-frame-wrap" id="heroParallaxFrame">
+            <div class="hero-image-frame">
+              <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" alt="Luxury Editorial Wedding Moment by WCC.BYFARIHA" class="hero-img" id="heroCoverImg">
+              <div class="hero-img-overlay"></div>
+            </div>
+            
+            <!-- Slow rotating luxury stamp badge -->
+            <div class="editorial-stamp" id="editorialStamp">
+              <svg viewBox="0 0 100 100" class="stamp-svg">
+                <path id="stampPath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none"/>
+                <text font-size="9" fill="#d8b788" letter-spacing="2.2">
+                  <textPath href="#stampPath" startOffset="0%">
+                    ✦ WCC.BYFARIHA ✦ EDITORIAL WEDDING ✦
+                  </textPath>
+                </text>
+              </svg>
+              <div class="stamp-center">
+                <span>EST</span>
+                <b>2024</b>
+              </div>
+            </div>
+
+            <!-- Floating Editorial Tag -->
+            <div class="hero-floating-card">
+              <span class="float-tag">EDITORIAL VISION</span>
+              <p>Unobtrusive, cinematic, & effortlessly candid.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Ticker Banner -->
+      <div class="editorial-ticker">
+        <div class="ticker-track">
+          <span>SACRED VOWS</span><span class="ticker-star">✦</span>
+          <span>SAME-DAY REELS</span><span class="ticker-star">✦</span>
+          <span>4K UNCOMPRESSED RAW FOOTAGE</span><span class="ticker-star">✦</span>
+          <span>EDITORIAL AESTHETIC</span><span class="ticker-star">✦</span>
+          <span>BEHIND THE SCENES</span><span class="ticker-star">✦</span>
+          <span>SACRED VOWS</span><span class="ticker-star">✦</span>
+          <span>SAME-DAY REELS</span><span class="ticker-star">✦</span>
+          <span>4K UNCOMPRESSED RAW FOOTAGE</span><span class="ticker-star">✦</span>
+          <span>EDITORIAL AESTHETIC</span><span class="ticker-star">✦</span>
+          <span>BEHIND THE SCENES</span><span class="ticker-star">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ABOUT (PENGENALAN WCC.BYFARIHA) -->
+    <section class="editorial-section about-section" id="about">
+      <div class="section-container">
+        
+        <div class="about-grid">
+          <div class="about-story reveal-on-scroll">
+            <p class="section-eyebrow">ABOUT THE BRAND</p>
+            <h2 class="section-title">
+              Bukan Sekadar Dokumentasi,<br>
+              <em>Melainkan Visual Poetry.</em>
+            </h2>
+            
+            <p class="about-lead" id="aboutText">
+              WCC.BYFARIHA hadir untuk pasangan yang menginginkan dokumentasi pernikahan bernilai seni tinggi. Kami memadukan kehangatan momen intim dengan visual berkelas layaknya editorial majalah pernikahan dunia.
+            </p>
+
+            <div class="about-pillars">
+              <div class="pillar-item">
+                <span class="pillar-num">01</span>
+                <div>
+                  <h4>Discreet & Intimate</h4>
+                  <p>Merekam setiap momen tanpa mengganggu keheningan dan kesakralan prosesi pernikahan Anda.</p>
+                </div>
+              </div>
+              <div class="pillar-item">
+                <span class="pillar-num">02</span>
+                <div>
+                  <h4>Cinematic 4K 60fps</h4>
+                  <p>Menggunakan gear flagship terbaik dengan resolusi tinggi, warna kulit natural, dan stabilisasi halus.</p>
+                </div>
+              </div>
+              <div class="pillar-item">
+                <span class="pillar-num">03</span>
+                <div>
+                  <h4>Speed & Completeness</h4>
+                  <p>Teaser Reels siap posting dalam 24 jam, plus seluruh file mentah (raw video & photo) tanpa kompresi.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="about-signature">
+              <div class="sig-line"></div>
+              <span class="sig-name">Fariha · Creative Director WCC.BYFARIHA</span>
+            </div>
+          </div>
+
+          <div class="about-visual reveal-on-scroll" style="animation-delay: 0.25s;">
+            <div class="about-card-frame">
+              <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80" alt="WCC.BYFARIHA Editorial Atmosphere" class="about-img">
+              <div class="about-stat-box">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Dedikasi Penuh & Unlimited Raw Footage</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. PRICELIST (KARTU PAKET DAN HARGA) -->
+    <section class="editorial-section pricelist-section" id="pricelist">
+      <div class="section-container">
+        
+        <div class="section-header reveal-on-scroll">
+          <div>
+            <p class="section-eyebrow">INVESTMENT & PACKAGES</p>
+            <h2 class="section-title">Pricelist <em>& Experiences</em></h2>
+          </div>
+          <p class="section-desc">
+            Pilihan paket dokumentasi konten eksklusif yang dirancang fleksibel untuk intimate wedding, akad, siraman, hingga resepsi akbar.
+          </p>
+        </div>
+
+        <div id="packageGrid" class="package-grid">
+          <!-- Fallback or dynamic packages rendered via JS -->
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+            <p>Memuat daftar paket eksklusif...</p>
+          </div>
+        </div>
+
+        <div class="custom-inquiry-box reveal-on-scroll">
+          <div>
+            <h4>Membutuhkan Paket Kustom untuk Luar Kota / Multi-Day?</h4>
+            <p>Kami melayani pemesanan khusus untuk prewedding, lamaran, akad terpisah, serta destination wedding di seluruh Indonesia.</p>
+          </div>
+          <a class="btn btn-champagne" href="#booking">Diskusi Paket Kustom ↗</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. PORTFOLIO (GALERI FOTO & VIDEO) -->
+    <section class="editorial-section portfolio-section" id="portfolio">
+      <div class="section-container">
+        
+        <div class="section-header reveal-on-scroll">
+          <div>
+            <p class="section-eyebrow">SELECTED WORKS</p>
+            <h2 class="section-title">The Editorial <em>Archive</em></h2>
+          </div>
+          <p class="section-desc">
+            Kumpulan cuplikan cerita cinta, senyuman haru, dan detail estetika yang telah kami abadikan.
+          </p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="portfolio-tabs reveal-on-scroll">
+          <button class="tab-btn active" data-filter="all">Semua Cerita</button>
+          <button class="tab-btn" data-filter="image">Foto Momen</button>
+          <button class="tab-btn" data-filter="video">Video & Reels</button>
+        </div>
+
+        <div id="portfolioGrid" class="portfolio-grid">
+          <!-- Rendered via JS -->
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+            <p>Menyiapkan galeri arsip...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. REVIEWS (TESTIMONI PELANGGAN) -->
+    <section class="editorial-section reviews-section" id="reviews">
+      <div class="section-container">
+        
+        <div class="section-header text-center reveal-on-scroll">
+          <p class="section-eyebrow">HEARTFELT STORIES</p>
+          <h2 class="section-title">What Couples <em>Say</em></h2>
+          <p class="section-desc center-desc">
+            Kata-kata tulus dari para pasangan yang telah mempercayakan momen sakral mereka kepada WCC.BYFARIHA.
+          </p>
+        </div>
+
+        <div id="reviewGrid" class="reviews-grid">
+          <!-- Fallback or dynamic reviews rendered via JS -->
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+            <p>Memuat testimoni klien...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. BOOKING (FORMULIR PEMESANAN DAN WHATSAPP) -->
+    <section class="editorial-section booking-section" id="booking">
+      <div class="section-container">
+        
+        <div class="booking-wrapper reveal-on-scroll">
+          <div class="booking-card">
+            
+            <div class="booking-header">
+              <div class="eyebrow-badge">
+                <span class="sparkle">✦</span>
+                <span>RESERVE YOUR DATE</span>
+                <span class="sparkle">✦</span>
+              </div>
+              <h2 class="booking-title">Mari Abadikan <em>Hari Bahagiamu</em></h2>
+              <p class="booking-subtitle">
+                Isi formulir di bawah ini untuk mengecek ketersediaan tanggal dan konsultasi langsung via WhatsApp resmi WCC.BYFARIHA.
+              </p>
+            </div>
+
+            <form id="bookingForm" class="booking-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bookingName">Nama Lengkap Pasangan / Klien *</label>
+                  <input type="text" id="bookingName" placeholder="Contoh: Dinda & Rama" required>
+                </div>
+                <div class="form-group">
+                  <label for="bookingClientWa">Nomor WhatsApp Anda *</label>
+                  <input type="tel" id="bookingClientWa" placeholder="08xxxxxxxxxx" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bookingDate">Tanggal Acara Pernikahan *</label>
+                  <input type="date" id="bookingDate" required>
+                </div>
+                <div class="form-group">
+                  <label for="bookingLocation">Kota & Nama Venue / Lokasi *</label>
+                  <input type="text" id="bookingLocation" placeholder="Contoh: Magetan / Ballroom Hotel Grand Mercure Solo" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="bookingPackage">Pilihan Paket Layanan *</label>
+                <select id="bookingPackage" required>
+                  <option value="" disabled selected>Pilih salah satu paket...</option>
+                  <option value="Paket Intimate Wedding">Paket Intimate Wedding</option>
+                  <option value="Paket Grand Wedding (Full Day)">Paket Grand Wedding (Full Day)</option>
+                  <option value="Paket All-In Luxury Editorial">Paket All-In Luxury Editorial</option>
+                  <option value="Paket Kustom / Lainnya">Paket Kustom / Konsultasi Dulu</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="bookingNotes">Catatan / Konsep Khusus (Opsional)</label>
+                <textarea id="bookingNotes" rows="3" placeholder="Ceritakan tema pernikahan, rundown singkat, atau kebutuhan konten khusus..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-terracotta btn-submit-booking">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>Kirim Pemesanan via WhatsApp Resmi</span>
+              </button>
+            </form>
+
+            <div class="booking-footer-info">
+              <div class="contact-pill">
+                <span>Direct WhatsApp:</span>
+                <a id="directWaLink" href="https://wa.me/6281234567890" target="_blank" rel="noopener">Chat Langsung ↗</a>
+              </div>
+              <div class="contact-pill">
+                <span>Instagram:</span>
+                <a id="directIgLink" href="https://www.instagram.com/wcc.byfariha/" target="_blank" rel="noopener">@wcc.byfariha ↗</a>
+              </div>
+              <div class="contact-pill">
+                <span>Wilayah Operasional:</span>
+                <span id="bookingAreaNotice" class="pill-text">Magetan, Madiun, Solo & Sekitarnya</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Modal for Portfolio View -->
+  <div id="mediaLightbox" class="media-modal" aria-hidden="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-dialog">
+      <button class="modal-close" id="modalClose" aria-label="Tutup preview">✕</button>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-caption" id="modalCaption"></div>
+    </div>
+  </div>
+
+  <!-- Editorial Footer -->
+  <footer class="editorial-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="brand-monogram">F</span>
+          <div>
+            <h3>WCC.BYFARIHA</h3>
+            <p>Luxury Editorial Wedding & Event Content Creator</p>
+          </div>
+        </div>
+        <div class="footer-quote">
+          <p>“Preserving the poetry of your love story with quiet luxury and timeless grace.”</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span id="year">2026</span> WCC.BYFARIHA. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#home">Back to Top ↑</a>
+          <span class="sep">·</span>
+          <a href="admin/login.html" class="admin-login-link">Admin Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/public.js"></script>
+</body>
+</html>
