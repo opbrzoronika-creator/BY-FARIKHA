@@ -25,3 +25,4 @@ alter table public.site_settings add column if not exists hero_title text defaul
 alter table public.site_settings add column if not exists about_title text default 'Sentuhan Editorial dalam Setiap Rekaman Emosi';
 alter table public.site_settings add column if not exists device_text text default 'Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam';
 alter table public.site_settings add column if not exists footer_quote text default '“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”';
+
