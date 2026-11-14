@@ -11,14 +11,17 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 
-// 1. Membaca Environment Variables dari .env.local atau .env
+// 1. Membaca Environment Variables dari .env lalu dioverride oleh .env.local
 function loadEnv() {
   const env = {
     SUPABASE_URL: '',
     SUPABASE_ANON_KEY: ''
   };
 
-  const files = ['.env.local', '.env'];
+  const isPlaceholder = (val) => !val || val.includes('PASTE_') || val.includes('your-project') || val.includes('your-anon');
+
+  // Urutan: .env terlebih dahulu, kemudian .env.local menimpa .env
+  const files = ['.env', '.env.local'];
   for (const f of files) {
     const p = path.join(ROOT_DIR, f);
     if (fs.existsSync(p)) {
@@ -31,8 +34,16 @@ function loadEnv() {
             const [k, ...v] = trimmed.split('=');
             const key = k.trim();
             const val = v.join('=').trim().replace(/^["']|["']$/g, '');
-            if (key === 'SUPABASE_URL' && val) env.SUPABASE_URL = val;
-            if (key === 'SUPABASE_ANON_KEY' && val) env.SUPABASE_ANON_KEY = val;
+            if ((key === 'SUPABASE_URL' || key === 'NEXT_PUBLIC_SUPABASE_URL' || key === 'VITE_SUPABASE_URL')) {
+              if (!isPlaceholder(val) || !env.SUPABASE_URL) {
+                env.SUPABASE_URL = val;
+              }
+            }
+            if ((key === 'SUPABASE_ANON_KEY' || key === 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY' || key === 'NEXT_PUBLIC_SUPABASE_ANON_KEY' || key === 'VITE_SUPABASE_ANON_KEY')) {
+              if (!isPlaceholder(val) || !env.SUPABASE_ANON_KEY) {
+                env.SUPABASE_ANON_KEY = val;
+              }
+            }
           }
         }
       } catch (e) {
@@ -42,8 +53,17 @@ function loadEnv() {
   }
 
   // Cek juga process.env
-  if (process.env.SUPABASE_URL) env.SUPABASE_URL = process.env.SUPABASE_URL;
-  if (process.env.SUPABASE_ANON_KEY) env.SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+  if (process.env.SUPABASE_URL && !isPlaceholder(process.env.SUPABASE_URL)) {
+    env.SUPABASE_URL = process.env.SUPABASE_URL;
+  } else if (process.env.NEXT_PUBLIC_SUPABASE_URL && !isPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL)) {
+    env.SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  }
+
+  if (process.env.SUPABASE_ANON_KEY && !isPlaceholder(process.env.SUPABASE_ANON_KEY)) {
+    env.SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+  } else if (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && !isPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)) {
+    env.SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  }
 
   return env;
 }
@@ -75,17 +95,27 @@ const server = http.createServer((req, res) => {
     pathname = '/index.html';
   }
 
+  // Keamanan: Blokir akses langsung ke file konfigurasi atau repositori git
+  const lowerPath = pathname.toLowerCase();
+  if (lowerPath.includes('.env') || lowerPath.includes('.git') || lowerPath.endsWith('.sql')) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('403 Forbidden: Akses ke file konfigurasi atau database dibatasi.');
+    return;
+  }
+
   // Endpoint khusus untuk melayani js/config.js dengan injeksi environment variables
   if (pathname.endsWith('/js/config.js') || pathname === '/js/config.js') {
     const configPath = path.join(ROOT_DIR, 'js', 'config.js');
     if (fs.existsSync(configPath)) {
       let content = fs.readFileSync(configPath, 'utf8');
       
-      // Jika di .env.local terdapat nilai yang valid, injeksikan langsung
+      // Jika di .env.local terdapat nilai yang valid, injeksikan langsung ke window
       if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
         content = `// [Server Injected Config from .env.local]\n` +
           `window.SUPABASE_URL = ${JSON.stringify(env.SUPABASE_URL)};\n` +
-          `window.SUPABASE_ANON_KEY = ${JSON.stringify(env.SUPABASE_ANON_KEY)};\n\n` +
+          `window.SUPABASE_ANON_KEY = ${JSON.stringify(env.SUPABASE_ANON_KEY)};\n` +
+          `window.NEXT_PUBLIC_SUPABASE_URL = ${JSON.stringify(env.SUPABASE_URL)};\n` +
+          `window.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = ${JSON.stringify(env.SUPABASE_ANON_KEY)};\n\n` +
           content;
       }
 
@@ -144,7 +174,7 @@ server.listen(PORT, () => {
   console.log('----------------------------------------------------------------');
   if (env.SUPABASE_URL && !env.SUPABASE_URL.includes('your-project') && !env.SUPABASE_URL.includes('PASTE_')) {
     console.log(`✅ Supabase URL     : ${env.SUPABASE_URL}`);
-    console.log(`✅ Supabase Key     : Terkonfigurasi (Publishable Key)`);
+    console.log(`✅ Supabase Key     : Terkonfigurasi (${env.SUPABASE_ANON_KEY.substring(0, 16)}...)`);
   } else {
     console.log(`ℹ️  Supabase         : Menunggu pengisian kredensial di .env.local`);
   }
