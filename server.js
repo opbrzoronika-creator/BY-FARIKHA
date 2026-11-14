@@ -1,5 +1,5 @@
 /**
- * WCC.BYFARIHA — Local Development Server
+ * WCC.BYFARIHA — Local Development Server & Vercel Handler
  * Menjalankan website & dashboard lokal serta memuat environment variables dari .env.local / .env
  * Menggunakan modul bawaan Node.js (tanpa dependensi eksternal).
  */
@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
-const ROOT_DIR = path.join(__dirname, '..');
+const ROOT_DIR = process.cwd();
 
 // 1. Membaca Environment Variables dari .env lalu dioverride oleh .env.local
 function loadEnv() {
@@ -88,7 +88,7 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   // Parse URL
-  const reqUrl = new URL(req.url, `http://${req.headers.host}`);
+  const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(reqUrl.pathname);
 
   if (pathname === '/') {
@@ -164,19 +164,23 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log('================================================================');
-  console.log('✦ WCC.BYFARIHA — Server Lokal Berjalan');
-  console.log('================================================================');
-  console.log(`🌐 Website Utama   : http://localhost:${PORT}/index.html`);
-  console.log(`🔐 Login Pemilik   : http://localhost:${PORT}/admin/login.html`);
-  console.log(`📊 Dashboard Admin : http://localhost:${PORT}/admin/index.html`);
-  console.log('----------------------------------------------------------------');
-  if (env.SUPABASE_URL && !env.SUPABASE_URL.includes('your-project') && !env.SUPABASE_URL.includes('PASTE_')) {
-    console.log(`✅ Supabase URL     : ${env.SUPABASE_URL}`);
-    console.log(`✅ Supabase Key     : Terkonfigurasi (${env.SUPABASE_ANON_KEY.substring(0, 16)}...)`);
-  } else {
-    console.log(`ℹ️  Supabase         : Menunggu pengisian kredensial di .env.local`);
-  }
-  console.log('================================================================');
-});
+if (require.main === module || !process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log('================================================================');
+    console.log('✦ WCC.BYFARIHA — Server Lokal Berjalan');
+    console.log('================================================================');
+    console.log(`🌐 Website Utama   : http://localhost:${PORT}/index.html`);
+    console.log(`🔐 Login Pemilik   : http://localhost:${PORT}/admin/login.html`);
+    console.log(`📊 Dashboard Admin : http://localhost:${PORT}/admin/index.html`);
+    console.log('----------------------------------------------------------------');
+    if (env.SUPABASE_URL && !env.SUPABASE_URL.includes('your-project') && !env.SUPABASE_URL.includes('PASTE_')) {
+      console.log(`✅ Supabase URL     : ${env.SUPABASE_URL}`);
+      console.log(`✅ Supabase Key     : Terkonfigurasi (${env.SUPABASE_ANON_KEY.substring(0, 16)}...)`);
+    } else {
+      console.log(`ℹ️  Supabase         : Menunggu pengisian kredensial di .env.local`);
+    }
+    console.log('================================================================');
+  });
+}
+
+module.exports = server;
