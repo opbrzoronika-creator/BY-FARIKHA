@@ -3,10 +3,6 @@
  * Terintegrasi penuh dengan Supabase Database & Supabase Storage bucket 'wcc-portfolio'
  */
 
-const isConfigured = () => typeof window.isSupabaseConfigured === "function" 
-  ? window.isSupabaseConfigured() 
-  : (window.SUPABASE_URL && !window.SUPABASE_URL.includes("PASTE_") && window.SUPABASE_ANON_KEY && !window.SUPABASE_ANON_KEY.includes("PASTE_"));
-
 const $ = id => document.getElementById(id);
 
 let db = null;
@@ -18,8 +14,12 @@ let currentBookingFilter = "all";
 
 // Inisialisasi Sesi & Autentikasi
 (async () => {
-  if (!isConfigured()) {
-    $("adminNotice").textContent = "Konfigurasi Supabase belum terdeteksi. Silakan periksa file .env atau js/config.js.";
+  const ready = typeof window.ensureSupabaseConfig === "function" 
+    ? await window.ensureSupabaseConfig() 
+    : window.isSupabaseConfigured();
+
+  if (!ready) {
+    $("adminNotice").textContent = "Konfigurasi Supabase belum terdeteksi. Silakan atur SUPABASE_URL dan SUPABASE_ANON_KEY di .env.local atau melalui halaman login.";
     $("adminNotice").style.color = "#d9534f";
     return;
   }

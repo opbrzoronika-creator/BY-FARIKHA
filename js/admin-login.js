@@ -3,20 +3,63 @@
  * Terintegrasi dengan Supabase Authentication & Validasi Role 'owner' pada tabel profiles
  */
 
-const isConfigured = () => typeof window.isSupabaseConfigured === "function" 
-  ? window.isSupabaseConfigured() 
-  : (window.SUPABASE_URL && !window.SUPABASE_URL.includes("PASTE_") && window.SUPABASE_ANON_KEY && !window.SUPABASE_ANON_KEY.includes("PASTE_"));
-
 const form = document.getElementById("loginForm");
 const msg = document.getElementById("loginMessage");
 const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+const helperCard = document.getElementById("configHelperCard");
+const cfgSaveBtn = document.getElementById("cfgSaveBtn");
+const cfgUrlInput = document.getElementById("cfgUrlInput");
+const cfgKeyInput = document.getElementById("cfgKeyInput");
 
+// Cek konfigurasi saat halaman dimuat
+(async function checkConfig() {
+  const ready = typeof window.ensureSupabaseConfig === "function" 
+    ? await window.ensureSupabaseConfig() 
+    : window.isSupabaseConfigured();
+
+  if (!ready && helperCard) {
+    helperCard.style.display = "block";
+    if (cfgUrlInput && window.SUPABASE_URL && !window.SUPABASE_URL.includes("your-project")) {
+      cfgUrlInput.value = window.SUPABASE_URL;
+    }
+  } else if (helperCard) {
+    helperCard.style.display = "none";
+  }
+})();
+
+// Handler simpan kredensial cepat dari UI helper
+if (cfgSaveBtn) {
+  cfgSaveBtn.addEventListener("click", () => {
+    const url = cfgUrlInput ? cfgUrlInput.value.trim() : "";
+    const key = cfgKeyInput ? cfgKeyInput.value.trim() : "";
+
+    if (!url || !key) {
+      alert("Harap masukkan SUPABASE_URL dan SUPABASE_ANON_KEY.");
+      return;
+    }
+
+    if (window.setSupabaseCredentials && window.setSupabaseCredentials(url, key)) {
+      if (helperCard) helperCard.style.display = "none";
+      if (msg) {
+        msg.textContent = "Kredensial berhasil disimpan! Silakan masuk dengan akun pemilik Anda.";
+        msg.style.color = "#5cb85c";
+      }
+    }
+  });
+}
+
+// Handler form login
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (!isConfigured()) {
-      msg.textContent = "Supabase belum dikonfigurasi. Harap isi SUPABASE_URL dan SUPABASE_ANON_KEY pada file .env atau js/config.js terlebih dahulu.";
+    const ready = typeof window.ensureSupabaseConfig === "function" 
+      ? await window.ensureSupabaseConfig() 
+      : window.isSupabaseConfigured();
+
+    if (!ready) {
+      if (helperCard) helperCard.style.display = "block";
+      msg.textContent = "Supabase belum terkonfigurasi. Silakan isi SUPABASE_URL dan SUPABASE_ANON_KEY pada formulir pengaturan di bawah ini atau pada file .env.local.";
       msg.style.color = "#d9534f";
       return;
     }
@@ -68,9 +111,8 @@ if (form) {
         .maybeSingle();
 
       if (profileError || !profile || profile.role !== "owner") {
-        // Bukan akun pemilik, sign out seketika
         await db.auth.signOut();
-        msg.textContent = "Akses Ditolak: Akun Anda tidak memiliki hak akses sebagai pemilik (role 'owner') di tabel profiles.";
+        msg.textContent = "Akses Ditolak: Akun Anda tidak terdaftar sebagai pemilik (role 'owner') di tabel profiles.";
         msg.style.color = "#d9534f";
         if (submitBtn) {
           submitBtn.disabled = false;
