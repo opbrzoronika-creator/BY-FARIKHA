@@ -2500,9 +2500,14 @@ body.intro-active {
 
 /* Animasi tumpuk saat elemen memasuki viewport */
 .reveal-stack {
-  opacity: 0;
-  transform: translateY(40px) scale(0.95);
+  opacity: 1;
+  transform: translateY(0) scale(1);
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-stack.will-reveal:not(.in-view) {
+  opacity: 0;
+  transform: translateY(35px) scale(0.96);
 }
 
 .reveal-stack.in-view {

@@ -129,19 +129,22 @@ function renderBookingsList() {
   };
 
   container.innerHTML = filtered.map(b => {
-    let cleanWa = (b.whatsapp_number || "").replace(/\D/g, "");
+    let cleanWa = (b.whatsapp_number || b.whatsapp || "").replace(/\D/g, "");
     if (cleanWa.startsWith("0")) cleanWa = "62" + cleanWa.slice(1);
 
     const waChatMsg = encodeURIComponent(`Halo Kak ${b.client_name}, terima kasih telah melakukan reservasi di WCC.BYFARIHA untuk tanggal ${b.event_date}. Kami ingin mengonfirmasi detail acara pernikahan Anda.`);
     const waChatLink = `https://wa.me/${cleanWa}?text=${waChatMsg}`;
+
+    const packageName = b.package_name || (currentPackages.find(p => p.id === b.package_id)?.name) || "Paket Layanan";
+    const waDisplay = b.whatsapp_number || b.whatsapp || "-";
 
     return `
       <div class="admin-row" style="flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px 0;">
         <div style="display: flex; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 10px;">
           <div>
             <b style="font-size: 16px;">${esc(b.client_name)}</b>
-            <span style="font-size: 13px; color: var(--champagne);">Paket: ${esc(b.package_name)} · Tanggal: ${esc(b.event_date)}</span>
-            <span style="color: var(--text-muted); font-size: 12px;">Lokasi: ${esc(b.location)} · WhatsApp: ${esc(b.whatsapp_number)}</span>
+            <span style="font-size: 13px; color: var(--champagne);">Paket: ${esc(packageName)} · Tanggal: ${esc(b.event_date)}</span>
+            <span style="color: var(--text-muted); font-size: 12px;">Lokasi: ${esc(b.location)} · WhatsApp: ${esc(waDisplay)}</span>
           </div>
           <div>
             ${statusLabels[b.status] || b.status}
@@ -440,7 +443,17 @@ async function loadReviews() {
     .order("created_at", { ascending: false });
 
   if (error) return notice("Gagal memuat ulasan: " + error.message);
-  currentReviews = data || [];
+  
+  // Baca juga dari antrean ulasan konsumen lokal jika RLS database sempat menahan
+  let offlineRevs = [];
+  try {
+    offlineRevs = JSON.parse(localStorage.getItem("wcc_offline_reviews") || "[]");
+  } catch (e) {}
+
+  const dbList = data || [];
+  const existingIds = new Set(dbList.map(r => r.id));
+  const newOffline = offlineRevs.filter(r => !existingIds.has(r.id));
+  currentReviews = [...dbList, ...newOffline];
   
   const totalCount = currentReviews.length;
   const pendingCount = currentReviews.filter(r => !r.is_active).length;
@@ -518,6 +531,29 @@ window.filterDashboardReviews = function(filter) {
 
 window.toggleReviewApproval = async function(id, approveBool) {
   if (!db) return;
+
+  // Jika ulasan berasal dari antrean lokal
+  if (typeof id === "string" && id.startsWith("local-")) {
+    const item = currentReviews.find(r => r.id === id);
+    if (item && approveBool) {
+      const { error } = await db.from("reviews").insert({
+        client_name: item.client_name,
+        content: item.content,
+        is_active: true
+      });
+      if (error) return notice("Gagal menyetujui ulasan ke database: " + error.message);
+      
+      try {
+        const q = JSON.parse(localStorage.getItem("wcc_offline_reviews") || "[]").filter(r => r.id !== id);
+        localStorage.setItem("wcc_offline_reviews", JSON.stringify(q));
+      } catch (e) {}
+
+      notice("Ulasan berhasil disetujui dan kini tersimpan di database Supabase.");
+      await loadReviews();
+      return;
+    }
+  }
+
   const { error } = await db.from("reviews").update({ is_active: approveBool }).eq("id", id);
   if (error) return notice("Gagal memperbarui status ulasan: " + error.message);
   notice(approveBool ? "Ulasan berhasil disetujui dan kini tampil di website publik." : "Ulasan disembunyikan dari website.");
@@ -597,15 +633,29 @@ async function loadSettings() {
 
   if (error) return notice("Gagal memuat pengaturan: " + error.message);
   
-  if ($("settingHeroTitle")) $("settingHeroTitle").value = (data && data.hero_title) || localExtra.hero_title || "Abadikan Janji Suci, Keanggunan Abadi.";
-  if ($("settingHero")) $("settingHero").value = (data && data.hero_text) || "";
-  if ($("settingAboutTitle")) $("settingAboutTitle").value = (data && data.about_title) || localExtra.about_title || "Sentuhan Editorial dalam Setiap Rekaman Emosi";
-  if ($("settingAbout")) $("settingAbout").value = (data && data.about_text) || "";
-  if ($("settingDevice")) $("settingDevice").value = (data && data.device_text) || localExtra.device_text || "Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam";
-  if ($("settingWhatsApp")) $("settingWhatsApp").value = (data && data.whatsapp_number) || "";
-  if ($("settingInstagram")) $("settingInstagram").value = (data && data.instagram_url) || "https://www.instagram.com/wcc.byfariha/";
-  if ($("settingArea")) $("settingArea").value = (data && data.area_text) || "";
-  if ($("settingFooterQuote")) $("settingFooterQuote").value = (data && data.footer_quote) || localExtra.footer_quote || "“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”";
+  let cleanAbout = (data && data.about_text) || "";
+  let embeddedMeta = {};
+  if (typeof cleanAbout === "string" && cleanAbout.includes("<!--WCC_META:")) {
+    try {
+      const match = cleanAbout.match(/<!--WCC_META:(.*?)-->/);
+      if (match && match[1]) {
+        embeddedMeta = JSON.parse(match[1]);
+        cleanAbout = cleanAbout.replace(/<!--WCC_META:.*?-->/g, "").trim();
+      }
+    } catch (e) {}
+  }
+
+  const merged = { ...localExtra, ...embeddedMeta, ...(data || {}), about_text: cleanAbout };
+
+  if ($("settingHeroTitle")) $("settingHeroTitle").value = merged.hero_title || "Abadikan Janji Suci, Keanggunan Abadi.";
+  if ($("settingHero")) $("settingHero").value = merged.hero_text || "";
+  if ($("settingAboutTitle")) $("settingAboutTitle").value = merged.about_title || "Sentuhan Editorial dalam Setiap Rekaman Emosi";
+  if ($("settingAbout")) $("settingAbout").value = merged.about_text || "";
+  if ($("settingDevice")) $("settingDevice").value = merged.device_text || "Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam";
+  if ($("settingWhatsApp")) $("settingWhatsApp").value = merged.whatsapp_number || "";
+  if ($("settingInstagram")) $("settingInstagram").value = merged.instagram_url || "https://www.instagram.com/wcc.byfariha/";
+  if ($("settingArea")) $("settingArea").value = merged.area_text || "";
+  if ($("settingFooterQuote")) $("settingFooterQuote").value = merged.footer_quote || "“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”";
 }
 
 $("settingsForm").onsubmit = async e => {
@@ -630,11 +680,17 @@ $("settingsForm").onsubmit = async e => {
   // Simpan ke localStorage sebagai backup cepat
   localStorage.setItem("wcc_custom_settings", JSON.stringify(extra));
 
-  // Kolom standar yang terkonfirmasi ada di database
-  const standardRow = {
+  // Siapkan baris standar dengan metadata tersemat rapi di about_text
+  const metaObj = {
+    hero_title: extra.hero_title,
+    about_title: extra.about_title,
+    device_text: extra.device_text,
+    footer_quote: extra.footer_quote
+  };
+  const standardRowWithMeta = {
     id: 1,
     hero_text: extra.hero_text,
-    about_text: extra.about_text,
+    about_text: `${extra.about_text}\n<!--WCC_META:${JSON.stringify(metaObj)}-->`,
     whatsapp_number: extra.whatsapp_number,
     instagram_url: extra.instagram_url,
     area_text: extra.area_text
@@ -642,15 +698,15 @@ $("settingsForm").onsubmit = async e => {
 
   // Coba upsert dengan field lengkap
   let { error } = await db.from("site_settings").upsert({ id: 1, ...extra });
-  if (error && error.code === "42703") {
-    // Jika ada kolom baru yang belum ada di schema Postgres, gunakan row standar
-    const retry = await db.from("site_settings").upsert(standardRow);
+  if (error && (error.code === "42703" || (error.message && error.message.includes("column")))) {
+    // Jika ada kolom baru yang belum ada di schema Postgres, gunakan row standar dengan metadata tersemat
+    const retry = await db.from("site_settings").upsert(standardRowWithMeta);
     error = retry.error;
   }
 
   if (submitBtn) submitBtn.disabled = false;
   if (error) return notice("Gagal menyimpan teks: " + error.message);
-  notice("Seluruh teks website berhasil diperbarui!");
+  notice("Seluruh teks website berhasil diperbarui ke database!");
 };
 
 /* ==========================================================================
@@ -658,6 +714,18 @@ $("settingsForm").onsubmit = async e => {
    ========================================================================== */
 window.deleteRow = async (table, id) => {
   if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+  // Tangani ulasan lokal
+  if (table === "reviews" && typeof id === "string" && id.startsWith("local-")) {
+    try {
+      const q = JSON.parse(localStorage.getItem("wcc_offline_reviews") || "[]").filter(r => r.id !== id);
+      localStorage.setItem("wcc_offline_reviews", JSON.stringify(q));
+    } catch (e) {}
+    notice("Ulasan lokal berhasil dihapus.");
+    await refreshAll();
+    return;
+  }
+
   if (!db) return;
 
   const { error } = await db.from(table).delete().eq("id", id);

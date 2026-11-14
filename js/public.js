@@ -339,17 +339,29 @@ function initScrollAnimations() {
 
   revealElements.forEach(el => observer.observe(el));
 
-  // Animasi susun kartu saat digulir (Stacking Cards Effect)
-  const stackElements = document.querySelectorAll(".reveal-stack");
+  // Animasi susun kartu saat digulir
+  attachStackAnimations(document);
+}
+
+function attachStackAnimations(rootEl = document) {
+  if (!rootEl) return;
+  const stackElements = rootEl.querySelectorAll(".reveal-stack");
+  if (!("IntersectionObserver" in window)) {
+    stackElements.forEach(el => el.classList.add("in-view"));
+    return;
+  }
   const stackObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add("in-view");
       }
     });
-  }, { threshold: 0.12, rootMargin: "0px 0px -25px 0px" });
+  }, { threshold: 0.08, rootMargin: "0px 0px -20px 0px" });
 
-  stackElements.forEach(el => stackObserver.observe(el));
+  stackElements.forEach(el => {
+    el.classList.add("in-view");
+    stackObserver.observe(el);
+  });
 }
 
 function initParallaxEffects() {
@@ -386,45 +398,96 @@ function initParallaxEffects() {
    MEMUAT DATA DARI SUPABASE DATABASE (KONTEN PUBLIK)
    ========================================================================== */
 async function loadSiteData() {
+  // Pastikan kredensial Supabase terinisialisasi
+  if (typeof window.ensureSupabaseConfig === "function") {
+    try {
+      await window.ensureSupabaseConfig();
+    } catch (e) {
+      console.warn("Koneksi Supabase config:", e);
+    }
+  }
+
   if (isSupabaseReady()) {
     try {
       const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
       
-      const [packagesRes, portfolioRes, reviewsRes, settingsRes] = await Promise.all([
-        db.from("packages").select("*").eq("is_active", true).order("sort_order"),
-        db.from("portfolio").select("*").eq("is_active", true).order("created_at", { ascending: false }),
-        db.from("reviews").select("*").eq("is_active", true).order("created_at", { ascending: false }),
-        db.from("site_settings").select("*").eq("id", 1).maybeSingle()
-      ]);
+      // 1. Muat Paket Layanan secara independen (tidak bergantung query lain)
+      try {
+        const { data: pkgs, error: pkgErr } = await db
+          .from("packages")
+          .select("*")
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true });
 
-      // Paket
-      if (!packagesRes.error && packagesRes.data && packagesRes.data.length > 0) {
-        loadedPackages = packagesRes.data;
-      } else {
+        if (!pkgErr && pkgs && pkgs.length > 0) {
+          loadedPackages = pkgs;
+        } else if (!pkgErr && pkgs && pkgs.length === 0) {
+          // Jika owner belum menginput paket atau sedang kosong
+          loadedPackages = DATA_AWAL.packages;
+        } else {
+          console.warn("Koneksi tabel packages:", pkgErr?.message);
+          loadedPackages = DATA_AWAL.packages;
+        }
+      } catch (errPkg) {
+        console.warn("Exception memuat paket:", errPkg);
         loadedPackages = DATA_AWAL.packages;
       }
       renderPackages(loadedPackages);
 
-      // Portofolio
-      if (!portfolioRes.error && portfolioRes.data && portfolioRes.data.length > 0) {
-        allPortfolioItems = portfolioRes.data;
-      } else {
+      // 2. Muat Portofolio secara independen
+      try {
+        const { data: ports, error: portErr } = await db
+          .from("portfolio")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false });
+
+        if (!portErr && ports && ports.length > 0) {
+          allPortfolioItems = ports;
+        } else {
+          allPortfolioItems = DATA_AWAL.portfolio;
+        }
+      } catch (errPort) {
+        console.warn("Exception memuat portofolio:", errPort);
         allPortfolioItems = DATA_AWAL.portfolio;
       }
       renderPortfolio(allPortfolioItems);
       initPortfolioFilters();
 
-      // Ulasan Klien
-      if (!reviewsRes.error && reviewsRes.data && reviewsRes.data.length > 0) {
-        renderReviews(reviewsRes.data);
-      } else {
+      // 3. Muat Ulasan secara independen
+      try {
+        const { data: revs, error: revErr } = await db
+          .from("reviews")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false });
+
+        if (!revErr && revs && revs.length > 0) {
+          renderReviews(revs);
+        } else {
+          renderReviews(DATA_AWAL.reviews);
+        }
+      } catch (errRev) {
+        console.warn("Exception memuat ulasan:", errRev);
         renderReviews(DATA_AWAL.reviews);
       }
 
-      // Pengaturan Profil & Kontak
-      if (!settingsRes.error && settingsRes.data) {
-        applySettings(settingsRes.data);
-      } else {
+      // 4. Muat Pengaturan Situs secara independen
+      try {
+        const { data: setRow, error: setErr } = await db
+          .from("site_settings")
+          .select("*")
+          .eq("id", 1)
+          .maybeSingle();
+
+        if (!setErr && setRow) {
+          applySettings(setRow);
+        } else {
+          applySettings(DATA_AWAL.settings);
+        }
+      } catch (errSet) {
+        console.warn("Exception memuat pengaturan situs:", errSet);
         applySettings(DATA_AWAL.settings);
       }
 
@@ -434,7 +497,7 @@ async function loadSiteData() {
     }
   }
 
-  // Jika Supabase belum aktif atau masih kosong, tampilkan data awal yang rapi
+  // Jika Supabase belum aktif atau gagal, tampilkan data awal
   loadedPackages = DATA_AWAL.packages;
   allPortfolioItems = DATA_AWAL.portfolio;
   renderPackages(loadedPackages);
@@ -453,7 +516,20 @@ function applySettings(s) {
     localExtra = JSON.parse(localStorage.getItem("wcc_custom_settings") || "{}");
   } catch (e) {}
 
-  const merged = { ...localExtra, ...s };
+  // Deteksi metadata tambahan yang tersemat rapi di about_text jika skema DB belum di-alter
+  let cleanAbout = s.about_text || "";
+  let embeddedMeta = {};
+  if (typeof cleanAbout === "string" && cleanAbout.includes("<!--WCC_META:")) {
+    try {
+      const match = cleanAbout.match(/<!--WCC_META:(.*?)-->/);
+      if (match && match[1]) {
+        embeddedMeta = JSON.parse(match[1]);
+        cleanAbout = cleanAbout.replace(/<!--WCC_META:.*?-->/g, "").trim();
+      }
+    } catch (e) {}
+  }
+
+  const merged = { ...DATA_AWAL.settings, ...embeddedMeta, ...localExtra, ...s, about_text: cleanAbout };
 
   if (merged.hero_title) {
     const el = document.getElementById("heroTitle");
@@ -544,7 +620,7 @@ function renderPackages(packages) {
     `).join("");
 
     return `
-      <article class="package-card ${pkg.is_featured ? "featured" : ""} stack-scroll-item reveal-stack" style="--stack-index: ${index}; --stack-offset: ${index * 22}px;">
+      <article class="package-card ${pkg.is_featured ? "featured" : ""} stack-scroll-item reveal-stack in-view" style="--stack-index: ${index}; --stack-offset: ${index * 22}px;">
         ${pkg.is_featured ? `<span class="package-badge">PILIHAN UTAMA</span>` : ""}
         <div>
           <p class="package-eyebrow">LAYANAN EKSKLUSIF</p>
@@ -563,6 +639,8 @@ function renderPackages(packages) {
       </article>
     `;
   }).join("");
+
+  attachStackAnimations(container);
 }
 
 // Fungsi global untuk memilih paket dan scroll otomatis ke formulir booking
@@ -648,7 +726,7 @@ function renderReviews(reviews) {
     const initial = rev.client_name ? rev.client_name.trim().charAt(0) : "W";
     const stars = Number(rev.rating) > 0 ? "★".repeat(Math.min(5, Number(rev.rating))) : "★★★★★";
     return `
-      <article class="review-card stack-scroll-item reveal-stack" style="--stack-index: ${index};">
+      <article class="review-card stack-scroll-item reveal-stack in-view" style="--stack-index: ${index};">
         <div>
           <div class="quote-mark">“</div>
           <div class="review-stars">${stars}</div>
@@ -664,6 +742,8 @@ function renderReviews(reviews) {
       </article>
     `;
   }).join("");
+
+  attachStackAnimations(container);
 }
 
 /* ==========================================================================
@@ -752,10 +832,22 @@ function initReviewSubmissionModal() {
       try {
         if (isSupabaseReady()) {
           const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-          const { error } = await db.from("reviews").insert(reviewRow);
+          let { error } = await db.from("reviews").insert(reviewRow);
           
           if (error) {
-            console.warn("Kirim ulasan via Supabase:", error.message);
+            console.warn("Kirim ulasan via Supabase (RLS):", error.message);
+            // Simpan juga ke antrean lokal (localStorage)
+            try {
+              const queue = JSON.parse(localStorage.getItem("wcc_offline_reviews") || "[]");
+              queue.push({
+                ...reviewRow,
+                venue,
+                rating,
+                id: "local-" + Date.now(),
+                created_at: new Date().toISOString()
+              });
+              localStorage.setItem("wcc_offline_reviews", JSON.stringify(queue));
+            } catch (e) {}
           }
         }
 
@@ -771,7 +863,7 @@ function initReviewSubmissionModal() {
             submitBtn.disabled = false;
             submitBtn.textContent = "Kirim Ulasan";
           }
-        }, 3200);
+        }, 2800);
 
       } catch (err) {
         if (noticeEl) {
@@ -785,7 +877,7 @@ function initReviewSubmissionModal() {
             submitBtn.disabled = false;
             submitBtn.textContent = "Kirim Ulasan";
           }
-        }, 2500);
+        }, 2200);
       }
     });
   }
@@ -878,15 +970,37 @@ function initBookingForm() {
     if (isSupabaseReady()) {
       try {
         const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-        const { error: bookingError } = await db.from("bookings").insert({
+        
+        // Cari package_id jika cocok dengan nama paket
+        const matchedPkg = (loadedPackages || []).find(p => p.name === pkg);
+        const pkgId = matchedPkg && matchedPkg.id && !matchedPkg.id.startsWith("pkg-") ? matchedPkg.id : null;
+        const bookingNotes = `[Paket Dipilih: ${pkg}] ${notes}`;
+
+        // Coba insert dengan nama kolom aktual 'whatsapp' & 'package_id'
+        let { error: bookingError } = await db.from("bookings").insert({
           client_name: name,
-          whatsapp_number: clientWa,
+          whatsapp: clientWa,
           event_date: date,
           location: location,
-          package_name: pkg,
-          notes: notes,
+          package_id: pkgId,
+          notes: bookingNotes,
           status: "pending"
         });
+
+        // Fallback jika skema database menggunakan kolom 'whatsapp_number' / 'package_name'
+        if (bookingError && (bookingError.code === "PGRST204" || bookingError.code === "42703")) {
+          const fallbackPayload = {
+            client_name: name,
+            whatsapp_number: clientWa,
+            event_date: date,
+            location: location,
+            package_name: pkg,
+            notes: notes,
+            status: "pending"
+          };
+          const retry = await db.from("bookings").insert(fallbackPayload);
+          bookingError = retry.error;
+        }
 
         if (bookingError) {
           console.warn("Gagal menyimpan ke tabel bookings Supabase:", bookingError.message);
