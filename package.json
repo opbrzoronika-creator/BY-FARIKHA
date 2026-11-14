@@ -2,8 +2,8 @@
   "name": "wcc-byfariha",
   "version": "1.0.0",
   "description": "Website & Owner Dashboard WCC.BYFARIHA - Luxury Editorial Wedding",
-  "main": "server.js",
   "scripts": {
+    "build": "echo Static build complete",
     "start": "node server.js",
     "dev": "node server.js"
   },
@@ -15,4 +15,3 @@
   "author": "WCC.BYFARIHA",
   "license": "ISC"
 }
-
