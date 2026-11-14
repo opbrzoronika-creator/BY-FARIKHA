@@ -1,6 +1,6 @@
 /**
  * WCC.BYFARIHA — Luxury Editorial Wedding & Event Content Creator
- * Public Website Logic: Dynamic Data, Editorial Animations, Lightbox, & WhatsApp Booking
+ * Public Website Logic: Dynamic Data, Theme Engine (Dark & Light), Editorial Animations, Lightbox, & WhatsApp Booking
  */
 
 // Fallback Luxury Editorial Data (shown before Supabase is connected)
@@ -17,7 +17,7 @@ const FALLBACK_DATA = {
       id: "pkg-1",
       name: "The Intimate Vow",
       price: 2500000,
-      description: "Coverage 4-5 Jam (Akad / Pemberkatan)\n1 Creative Content Creator\n2 Edited Cinematic Reels (4K 60fps)\nAll Raw Videos & Photos Delivered in 24 Hours\niPhone 15/16 Pro Max Flagship Gear\nOnline Private Gallery Drive",
+      description: "Coverage 4-5 Jam (Akad / Pemberkatan)\n1 Creative Content Creator\n2 Edited Cinematic Reels (4K 60fps)\nAll Raw Videos & Photos Delivered in 24 Hours\nFlagship 4K Ultra HDR Gear\nOnline Private Gallery Drive",
       is_featured: false,
       sort_order: 1
     },
@@ -86,7 +86,7 @@ const FALLBACK_DATA = {
     {
       id: "rev-1",
       client_name: "Nadya & Kevin",
-      content: "Hasil konten dari WCC.BYFARIHA bener-bener kayak nonton film bioskop! Paginya akad, malamnya reels udah jadi dan langsung bisa kita upload di Instagram. Tone warnanya mahal banget, nggak norak.",
+      content: "Hasil konten dari WCC.BYFARIHA bener-bener kayak nonton film bioskop! Paginya akad, malamnya reels udah jadi dan langsung bisa kita upload di Instagram. Tone warnanya mahal banget, rapi dan elegan.",
       venue: "Grand Ballroom Solo"
     },
     {
@@ -98,7 +98,7 @@ const FALLBACK_DATA = {
     {
       id: "rev-3",
       client_name: "Claudia & Reza",
-      content: "Beda banget sama dokumentasi biasa. Ini beneran luxury editorial vibe, cinematic abis. Teman-teman pada kagum liat transisi dan audionya. Worth every single penny!",
+      content: "Beda banget sama dokumentasi biasa. Ini beneran luxury editorial vibe, cinematic abis. Teman-teman pada kagum liat transisi dan audionya. Sangat worth every single penny!",
       venue: "Royal Heritage Hotel"
     }
   ]
@@ -118,6 +118,9 @@ const isSupabaseReady = () => {
 
 // Initialize app
 document.addEventListener("DOMContentLoaded", () => {
+  // Theme Engine (Dark / Light)
+  initThemeEngine();
+
   // Footer year
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -138,6 +141,54 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load Data (Supabase or Fallback)
   loadSiteData();
 });
+
+/* ==========================================================================
+   THEME ENGINE (DARK & LIGHT MODE)
+   ========================================================================== */
+function initThemeEngine() {
+  const themeToggle = document.getElementById("themeToggle");
+  const sunIcon = themeToggle?.querySelector(".sun-icon");
+  const moonIcon = themeToggle?.querySelector(".moon-icon");
+
+  // Determine initial theme: saved preference -> system preference -> default dark
+  const savedTheme = localStorage.getItem("wcc_theme");
+  let currentTheme = savedTheme;
+
+  if (!currentTheme) {
+    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    currentTheme = prefersLight ? "light" : "dark";
+  }
+
+  applyTheme(currentTheme);
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("wcc_theme", theme);
+
+    if (sunIcon && moonIcon) {
+      if (theme === "light") {
+        sunIcon.style.display = "none";
+        moonIcon.style.display = "block";
+      } else {
+        sunIcon.style.display = "block";
+        moonIcon.style.display = "none";
+      }
+    }
+
+    // Update meta theme-color for mobile address bar
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", theme === "light" ? "#faf7f2" : "#121110");
+    }
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const activeTheme = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      applyTheme(activeTheme);
+    });
+  }
+}
 
 /* ==========================================================================
    NAVIGATION
@@ -185,7 +236,7 @@ function initScrollAnimations() {
         obs.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 
   revealElements.forEach(el => observer.observe(el));
 }
@@ -202,17 +253,17 @@ function initParallaxEffects() {
       window.requestAnimationFrame(() => {
         const scrolled = window.scrollY;
 
-        // Slow ambient glow parallax
+        // Subtle ambient glow parallax
         if (glow1) {
-          glow1.style.transform = `translate3d(0, ${scrolled * 0.12}px, 0)`;
+          glow1.style.transform = `translate3d(0, ${scrolled * 0.1}px, 0)`;
         }
         if (glow2) {
-          glow2.style.transform = `translate3d(0, ${-scrolled * 0.08}px, 0)`;
+          glow2.style.transform = `translate3d(0, ${-scrolled * 0.07}px, 0)`;
         }
 
         // Hero Frame slow parallax
         if (heroParallaxFrame && scrolled < 900) {
-          heroParallaxFrame.style.transform = `translate3d(0, ${scrolled * 0.07}px, 0)`;
+          heroParallaxFrame.style.transform = `translate3d(0, ${scrolled * 0.06}px, 0)`;
         }
 
         ticking = false;
@@ -405,7 +456,7 @@ function renderPortfolio(items, filter = "all") {
     const isVideo = item.type === "video";
     const mediaUrl = safeUrl(item.media_url);
 
-    // If video, use a nice wedding poster thumbnail or background
+    // If video, use wedding poster thumbnail
     const thumbUrl = isVideo 
       ? "https://images.unsplash.com/photo-1519225424982-f5f73c68df8e?auto=format&fit=crop&w=800&q=80" 
       : mediaUrl;
@@ -515,7 +566,7 @@ window.openLightbox = function(index, filter) {
 
   if (item.type === "video") {
     modalBody.innerHTML = `
-      <video controls autoplay playsinline style="max-height: 75vh; width: 100%;">
+      <video controls autoplay playsinline style="max-height: 74vh; width: 100%;">
         <source src="${safeMedia}" type="video/mp4">
         Browser Anda tidak mendukung tag video. Silakan buka tautan: <a href="${safeMedia}" target="_blank" style="color:var(--champagne)">Buka Video</a>
       </video>
@@ -569,7 +620,7 @@ function initBookingForm() {
     const message = 
 `✦ *RESERVASI WEDDING CONTENT CREATOR — WCC.BYFARIHA* ✦
 
-Halo Kak Fariha & Tim WCC.BYFARIHA, saya ingin mengecek ketersediaan tanggal dan booking layanan dokumentasi:
+Halo Kak Fariha & Tim WCC.BYFARIHA, saya ingin reservasi tanggal dan konsultasi paket dokumentasi:
 
 • *Nama Pasangan / Klien:* ${name}
 • *Nomor WhatsApp:* ${clientWa}
@@ -579,7 +630,7 @@ Halo Kak Fariha & Tim WCC.BYFARIHA, saya ingin mengecek ketersediaan tanggal dan
 • *Catatan / Konsep Acara:*
 "${notes}"
 
-Mohon informasi ketersediaan slot dan langkah selanjutnya. Terima kasih! ✨`;
+Mohon informasi ketersediaan slot tanggal dan detail selanjutnya. Terima kasih! ✨`;
 
     const encoded = encodeURIComponent(message);
     const waUrl = `https://wa.me/${currentWhatsAppNumber}?text=${encoded}`;
