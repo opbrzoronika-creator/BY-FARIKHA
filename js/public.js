@@ -1,9 +1,9 @@
 /**
  * WCC.BYFARIHA — Kreator Konten Pernikahan & Acara Eksklusif
- * Logika Website Publik: Data Dinamis, Engine Tema Gelap & Terang, Animasi Parallax, Lightbox, & Generator WhatsApp
+ * Logika Website Publik: Data Dinamis, Engine Tema Gelap & Terang, Animasi Parallax, Lightbox, & Integrasi Supabase Bookings
  */
 
-// Data Awal Eksklusif Berbahasa Indonesia (Ditampilkan sebelum Supabase terhubung)
+// Data Awal Eksklusif Berbahasa Indonesia (Ditampilkan bila Supabase masih kosong atau belum terisi)
 const DATA_AWAL = {
   settings: {
     hero_text: "Menangkap setiap tatapan, senyuman, dan momen sakral hari bahagia Anda dalam balutan estetika editorial sinematik 4K yang berkelas dan abadi.",
@@ -109,12 +109,9 @@ let loadedPackages = [];
 let allPortfolioItems = [];
 
 // Memeriksa apakah Supabase telah dikonfigurasi
-const isSupabaseReady = () => {
-  return window.SUPABASE_URL && 
-         window.SUPABASE_ANON_KEY && 
-         !window.SUPABASE_URL.includes("PASTE_") && 
-         !window.SUPABASE_ANON_KEY.includes("PASTE_");
-};
+const isSupabaseReady = () => typeof window.isSupabaseConfigured === "function" 
+  ? window.isSupabaseConfigured() 
+  : (window.SUPABASE_URL && !window.SUPABASE_URL.includes("PASTE_") && window.SUPABASE_ANON_KEY && !window.SUPABASE_ANON_KEY.includes("PASTE_"));
 
 // Inisialisasi saat dokumen siap
 document.addEventListener("DOMContentLoaded", () => {
@@ -142,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lightbox Modal Portofolio
   initLightbox();
 
-  // Formulir Pemesanan ke WhatsApp
+  // Formulir Pemesanan ke Supabase Database & WhatsApp
   initBookingForm();
 
   // Muat Data (Dari Supabase atau Data Cadangan)
@@ -277,7 +274,7 @@ function initParallaxEffects() {
 }
 
 /* ==========================================================================
-   MEMUAT DATA DARI DATABASE / DATA AWAL
+   MEMUAT DATA DARI SUPABASE DATABASE (KONTEN PUBLIK)
    ========================================================================== */
 async function loadSiteData() {
   if (isSupabaseReady()) {
@@ -308,14 +305,14 @@ async function loadSiteData() {
       renderPortfolio(allPortfolioItems);
       initPortfolioFilters();
 
-      // Ulasan
+      // Ulasan Klien
       if (!reviewsRes.error && reviewsRes.data && reviewsRes.data.length > 0) {
         renderReviews(reviewsRes.data);
       } else {
         renderReviews(DATA_AWAL.reviews);
       }
 
-      // Pengaturan Situs
+      // Pengaturan Profil & Kontak
       if (!settingsRes.error && settingsRes.data) {
         applySettings(settingsRes.data);
       } else {
@@ -328,7 +325,7 @@ async function loadSiteData() {
     }
   }
 
-  // Jika Supabase belum diisi, tampilkan data awal yang rapi dan elegan
+  // Jika Supabase belum aktif atau masih kosong, tampilkan data awal yang rapi
   loadedPackages = DATA_AWAL.packages;
   allPortfolioItems = DATA_AWAL.portfolio;
   renderPackages(loadedPackages);
@@ -525,7 +522,7 @@ function renderReviews(reviews) {
           <div class="author-monogram">${escapeHtml(initial)}</div>
           <div>
             <span class="author-name">${escapeHtml(rev.client_name)}</span>
-            <span class="author-venue">${escapeHtml(rev.venue || "Klien Pernikahan")}</span >
+            <span class="author-venue">${escapeHtml(rev.venue || "Klien Pernikahan")}</span>
           </div>
         </div>
       </article>
@@ -592,13 +589,13 @@ window.openLightbox = function(index, filter) {
 };
 
 /* ==========================================================================
-   FORMULIR RESERVASI KE WHATSAPP RESMI
+   FORMULIR RESERVASI KE SUPABASE DATABASE (TABEL BOOKINGS) & WHATSAPP
    ========================================================================== */
 function initBookingForm() {
   const form = document.getElementById("bookingForm");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("bookingName")?.value.trim() || "";
@@ -608,7 +605,37 @@ function initBookingForm() {
     const pkg = document.getElementById("bookingPackage")?.value || "Paket Belum Dipilih";
     const notes = document.getElementById("bookingNotes")?.value.trim() || "-";
 
-    // Format tanggal Indonesia yang anggun dan rapi
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Menyimpan Reservasi...</span>`;
+    }
+
+    // 1. Simpan ke database Supabase (Tabel bookings)
+    if (isSupabaseReady()) {
+      try {
+        const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        const { error: bookingError } = await db.from("bookings").insert({
+          client_name: name,
+          whatsapp_number: clientWa,
+          event_date: date,
+          location: location,
+          package_name: pkg,
+          notes: notes,
+          status: "pending"
+        });
+
+        if (bookingError) {
+          console.warn("Gagal menyimpan ke tabel bookings Supabase:", bookingError.message);
+        }
+      } catch (err) {
+        console.warn("Terjadi kendala saat menyimpan reservasi:", err);
+      }
+    }
+
+    // 2. Format tanggal Indonesia untuk pesan WhatsApp
     let formattedDate = date;
     if (date) {
       try {
@@ -624,7 +651,7 @@ function initBookingForm() {
       }
     }
 
-    // Susun Pesan WhatsApp yang Formal, Rapi, & Elegan
+    // 3. Susun Pesan WhatsApp yang Formal, Rapi, & Elegan
     const message = 
 `✦ *RESERVASI KONTEN PERNIKAHAN — WCC.BYFARIHA* ✦
 
@@ -643,7 +670,17 @@ Mohon informasi ketersediaan slot tanggal dan rincian selanjutnya. Terima kasih!
     const encoded = encodeURIComponent(message);
     const waUrl = `https://wa.me/${currentWhatsAppNumber}?text=${encoded}`;
 
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHtml;
+    }
+
+    // Buka WhatsApp resmi
     window.open(waUrl, "_blank");
+
+    // Reset formulir & tampilkan feedback
+    form.reset();
+    alert(`Terima kasih Kak ${name}! Reservasi Anda telah tersimpan dan diteruskan ke WhatsApp resmi WCC.BYFARIHA.`);
   });
 }
 

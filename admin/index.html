@@ -40,6 +40,7 @@
     <aside class="admin-side">
       <p class="eyebrow">MENU UTAMA</p>
       <a href="#overview">✦ Ringkasan Statistik</a>
+      <a href="#bookings">✦ Reservasi Masuk</a>
       <a href="#packages">✦ Kelola Paket Layanan</a>
       <a href="#portfolio">✦ Kelola Portofolio</a>
       <a href="#reviews">✦ Kelola Testimoni</a>
@@ -52,21 +53,25 @@
           <p class="eyebrow">PANEL KONTROL PEMILIK</p>
           <h1>Dashboard</h1>
         </div>
-        <span class="status-pill">Akses Pemilik Aktif</span>
+        <span class="status-pill" id="ownerStatusBadge">Akses Pemilik Aktif</span>
       </div>
 
       <p id="adminNotice" class="notice">Memeriksa sesi login dan koneksi Supabase...</p>
 
-      <!-- Overview Stats -->
+      <!-- 1. Ringkasan Statistik -->
       <section class="admin-panel" id="overview">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">RINGKASAN KONTEN</p>
+            <p class="eyebrow">RINGKASAN KONTEN & RESERVASI</p>
             <h2>Statistik Proyek</h2>
           </div>
         </div>
-        <p>Kelola harga paket, foto, video portofolio, review klien, dan nomor kontak resmi langsung dari smartphone maupun PC Anda.</p>
-        <div class="stats">
+        <p>Kelola data reservasi calon pengantin, paket harga, unggahan file ke Storage bucket <code>wcc-portfolio</code>, review klien, dan profil website secara mandiri.</p>
+        <div class="stats" style="flex-wrap: wrap;">
+          <div>
+            <b id="countBookings">—</b>
+            <span>Reservasi Klien</span>
+          </div>
           <div>
             <b id="countPackages">—</b>
             <span>Paket Aktif</span>
@@ -82,7 +87,29 @@
         </div>
       </section>
 
-      <!-- Packages Panel -->
+      <!-- 2. Kelola Reservasi (Bookings) -->
+      <section class="admin-panel" id="bookings">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">FORMULIR RESERVASI</p>
+            <h2>Daftar Reservasi Calon Pengantin</h2>
+          </div>
+        </div>
+        <p style="margin-bottom: 20px;">Reservasi yang dikirimkan calon pengantin melalui formulir booking website disimpan otomatis ke tabel <code>bookings</code>.</p>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+          <button class="btn btn-champagne-outline small" onclick="filterBookings('all')" id="filterBookingAll">Semua Reservasi</button>
+          <button class="btn btn-champagne-outline small" onclick="filterBookings('pending')" id="filterBookingPending">Menunggu Konfirmasi</button>
+          <button class="btn btn-champagne-outline small" onclick="filterBookings('confirmed')" id="filterBookingConfirmed">Dikonfirmasi</button>
+          <button class="btn btn-champagne-outline small" onclick="filterBookings('completed')" id="filterBookingCompleted">Selesai</button>
+        </div>
+
+        <div id="bookingList" class="admin-list">
+          <p class="muted">Memuat daftar reservasi...</p>
+        </div>
+      </section>
+
+      <!-- 3. Kelola Paket (Packages) -->
       <section class="admin-panel" id="packages">
         <div class="panel-heading">
           <div>
@@ -104,46 +131,68 @@
           <label class="check">
             <input id="packageFeatured" type="checkbox"> Tandai sebagai paket rekomendasi utama (Pilihan Utama)
           </label>
+          <label class="check" style="margin-top: 8px;">
+            <input id="packageActive" type="checkbox" checked> Tampilkan paket di website publik
+          </label>
           <div class="form-actions">
-            <button class="btn btn-terracotta" type="submit">Simpan Paket</button>
+            <button class="btn btn-terracotta" type="submit" id="packageSubmitBtn">Simpan Paket</button>
             <button class="btn btn-champagne-outline" type="button" id="resetPackage">Kosongkan Formulir</button>
           </div>
         </form>
         <div id="packageList" class="admin-list" style="margin-top: 25px;"></div>
       </section>
 
-      <!-- Portfolio Panel -->
+      <!-- 4. Kelola Portofolio (Portfolio & Storage Bucket wcc-portfolio) -->
       <section class="admin-panel" id="portfolio">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">ARSIP PORTOFOLIO</p>
+            <p class="eyebrow">ARSIP PORTOFOLIO & STORAGE</p>
             <h2>Kelola Portofolio</h2>
           </div>
         </div>
+        <p style="margin-bottom: 20px;">Unggah foto/video langsung ke Storage bucket <code>wcc-portfolio</code> atau masukkan tautan URL media publik.</p>
+        
         <form id="portfolioForm" class="editor-form">
+          <input type="hidden" id="portfolioId">
+          
           <label>Judul Dokumentasi
             <input id="portfolioTitle" required placeholder="Contoh: Prosesi Akad Nikah Intim Dinda & Rama">
           </label>
+          
           <label>Jenis Media
             <select id="portfolioType">
-              <option value="image">Foto (Tautan URL Gambar)</option>
-              <option value="video">Video (Tautan URL Video)</option>
+              <option value="image">Foto</option>
+              <option value="video">Video (Reels / Teaser)</option>
             </select>
           </label>
-          <label>Tautan URL Media Publik
-            <input id="portfolioUrl" type="url" placeholder="https://..." required>
+
+          <label>Unggah Berkas ke Storage (Bucket: wcc-portfolio)
+            <input type="file" id="portfolioFile" accept="image/*,video/*" style="padding: 10px; background: var(--bg-card); cursor: pointer;">
+            <small style="display:block; margin-top: 5px; color: var(--text-muted); font-size: 11px;">Pilih berkas foto atau video dari perangkat Anda untuk diunggah otomatis ke bucket <code>wcc-portfolio</code>.</small>
           </label>
+
+          <label>Atau Tautan URL Media (Bila tidak mengunggah file)
+            <input id="portfolioUrl" type="url" placeholder="https://...">
+            <small style="display:block; margin-top: 5px; color: var(--text-muted); font-size: 11px;">Kosongkan jika Anda sudah memilih file unggahan di atas.</small>
+          </label>
+
           <label>Keterangan Singkat / Lokasi Acara
             <input id="portfolioDescription" placeholder="Contoh: Prosesi Akad Nikah · Magetan">
           </label>
+
+          <label class="check">
+            <input id="portfolioActive" type="checkbox" checked> Tampilkan di galeri publik website
+          </label>
+
           <div class="form-actions">
-            <button class="btn btn-terracotta" type="submit">Tambah ke Portofolio</button>
+            <button class="btn btn-terracotta" type="submit" id="portfolioSubmitBtn">Simpan Portofolio</button>
+            <button class="btn btn-champagne-outline" type="button" id="resetPortfolio">Batal / Kosongkan</button>
           </div>
         </form>
         <div id="portfolioList" class="admin-list" style="margin-top: 25px;"></div>
       </section>
 
-      <!-- Reviews Panel -->
+      <!-- 5. Kelola Testimoni (Reviews) -->
       <section class="admin-panel" id="reviews">
         <div class="panel-heading">
           <div>
@@ -152,20 +201,25 @@
           </div>
         </div>
         <form id="reviewForm" class="editor-form">
+          <input type="hidden" id="reviewId">
           <label>Nama Pasangan / Klien
             <input id="reviewName" required placeholder="Contoh: Nadya & Kevin">
           </label>
           <label>Isi Testimoni Klien
             <textarea id="reviewText" rows="3" required placeholder="Tuliskan pengalaman klien..."></textarea>
           </label>
+          <label class="check">
+            <input id="reviewActive" type="checkbox" checked> Tampilkan di bagian ulasan website
+          </label>
           <div class="form-actions">
-            <button class="btn btn-terracotta" type="submit">Tambah Testimoni</button>
+            <button class="btn btn-terracotta" type="submit" id="reviewSubmitBtn">Simpan Testimoni</button>
+            <button class="btn btn-champagne-outline" type="button" id="resetReview">Kosongkan Formulir</button>
           </div>
         </form>
         <div id="reviewList" class="admin-list" style="margin-top: 25px;"></div>
       </section>
 
-      <!-- Settings Panel -->
+      <!-- 6. Profil & Kontak Resmi (Site Settings) -->
       <section class="admin-panel" id="settings">
         <div class="panel-heading">
           <div>

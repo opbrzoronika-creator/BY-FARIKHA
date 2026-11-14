@@ -1,3 +1,9 @@
+# Environment variables (JANGAN PERNAH COMMIT KUNCI RAHASIA!)
+.env
+.env.local
+.env.*.local
+*.env
+
 # OS generated files
 Thumbs.db
 ehthumbs.db
@@ -10,4 +16,3 @@ $RECYCLE.BIN/
 .idea/
 *.swp
 *.swo
-
