@@ -184,11 +184,8 @@ function initIntroScreen() {
     enterBtn.addEventListener("click", (e) => {
       e.preventDefault();
       closeIntro();
-      // Gulir mulus langsung ke bagian Portofolio
-      setTimeout(() => {
-        const port = document.getElementById("portfolio");
-        if (port) port.scrollIntoView({ behavior: "smooth" });
-      }, 550);
+      // Gulir mulus langsung ke halaman paling atas
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 
@@ -244,50 +241,16 @@ function initIntroScreen() {
 }
 
 /* ==========================================================================
-   ENGINE TEMA (GELAP & TERANG)
+   ENGINE TEMA (KHUSUS MODE GELAP / DARK LUXURY EDITORIAL ONLY)
    ========================================================================== */
 function initThemeEngine() {
-  const themeToggle = document.getElementById("themeToggle");
-  const sunIcon = themeToggle?.querySelector(".sun-icon");
-  const moonIcon = themeToggle?.querySelector(".moon-icon");
+  // Tetapkan tema gelap secara permanen
+  document.documentElement.setAttribute("data-theme", "dark");
+  localStorage.setItem("wcc_theme", "dark");
 
-  const savedTheme = localStorage.getItem("wcc_theme");
-  let currentTheme = savedTheme;
-
-  if (!currentTheme) {
-    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    currentTheme = prefersLight ? "light" : "dark";
-  }
-
-  applyTheme(currentTheme);
-
-  function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("wcc_theme", theme);
-
-    if (sunIcon && moonIcon) {
-      if (theme === "light") {
-        sunIcon.style.display = "none";
-        moonIcon.style.display = "block";
-        themeToggle.setAttribute("title", "Ganti ke Mode Gelap");
-      } else {
-        sunIcon.style.display = "block";
-        moonIcon.style.display = "none";
-        themeToggle.setAttribute("title", "Ganti ke Mode Terang");
-      }
-    }
-
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute("content", theme === "light" ? "#faf7f2" : "#121110");
-    }
-  }
-
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      const activeTheme = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
-      applyTheme(activeTheme);
-    });
+  const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+  if (metaThemeColor) {
+    metaThemeColor.setAttribute("content", "#121110");
   }
 }
 
@@ -565,13 +528,22 @@ function applySettings(s) {
   }
   if (merged.whatsapp_number) {
     currentWhatsAppNumber = merged.whatsapp_number.replace(/\D/g, "");
+    const waText = encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.");
     const waLink = document.getElementById("directWaLink");
     if (waLink) {
-      waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.")}`;
+      waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
     }
     const floatWa = document.getElementById("floatingWaBtn");
     if (floatWa) {
-      floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${encodeURIComponent("Halo Kak Fariha, saya ingin tanya ketersediaan tanggal & layanan wedding content creator.")}`;
+      floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
+    }
+    const headerWa = document.getElementById("headerWaBtn");
+    if (headerWa) {
+      headerWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
+    }
+    const footerWa = document.getElementById("footerWaLink");
+    if (footerWa) {
+      footerWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
     }
   }
   if (merged.instagram_url) {
@@ -580,6 +552,10 @@ function applySettings(s) {
       igLink.href = merged.instagram_url;
       const cleanHandle = merged.instagram_url.replace("https://www.instagram.com/", "").replace(/\/$/, "");
       igLink.textContent = `@${cleanHandle} ↗`;
+    }
+    const footerIg = document.getElementById("footerIgLink");
+    if (footerIg) {
+      footerIg.href = merged.instagram_url;
     }
   }
 }
