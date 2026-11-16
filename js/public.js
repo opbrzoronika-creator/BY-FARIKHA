@@ -440,7 +440,7 @@ function applySettings(s) {
     if (ticker) {
       const items = merged.ticker_text.split("·").map(t => t.trim()).filter(Boolean);
       if (items.length > 0) {
-        ticker.innerHTML = items.map(t => `<span>${escapeHtml(t)}</span><span class="ticker-star">✦</span>`).join(" ");
+        ticker.innerHTML = items.map(t => `<span>${escapeHtml(t)}</span><span class="ticker-dot">·</span>`).join(" ");
       }
     }
   }
@@ -536,7 +536,7 @@ function renderPackages(packages) {
 
     const featureListHtml = features.map(item => `
       <li>
-        <span class="feature-check">✦</span>
+        <span class="feature-check">✓</span>
         <span>${escapeHtml(item)}</span>
       </li>
     `).join("");
@@ -606,7 +606,7 @@ function renderPortfolio(items, filter = "all") {
         <img src="${thumbUrl}" alt="${escapeHtml(item.title)}" loading="lazy">
         
         <span class="portfolio-type-pill">
-          ${isVideo ? "<span>▶</span> VIDEO REELS" : "<span>✦</span> FOTO"}
+          ${isVideo ? "<span>▶</span> VIDEO REELS" : "<span>📷</span> FOTO"}
         </span>
 
         ${isVideo ? `<div class="video-play-badge">▶</div>` : ""}
@@ -776,7 +776,7 @@ function initReviewSubmissionModal() {
         if (noticeEl) {
           noticeEl.className = "form-notice success";
           noticeEl.style.display = "block";
-          noticeEl.innerHTML = "✦ <b>Terima kasih banyak!</b> Ulasan indah Anda telah kami terima dan akan segera ditampilkan setelah diverifikasi oleh pemilik.";
+          noticeEl.innerHTML = "<b>Terima kasih banyak!</b> Ulasan indah Anda telah kami terima dan akan segera ditampilkan setelah diverifikasi oleh pemilik.";
         }
 
         setTimeout(() => {
@@ -791,7 +791,7 @@ function initReviewSubmissionModal() {
         if (noticeEl) {
           noticeEl.className = "form-notice success";
           noticeEl.style.display = "block";
-          noticeEl.innerHTML = "✦ <b>Terima kasih!</b> Ulasan Anda telah tercatat dengan baik.";
+          noticeEl.innerHTML = "<b>Terima kasih!</b> Ulasan Anda telah tercatat dengan baik.";
         }
         setTimeout(() => {
           close();
