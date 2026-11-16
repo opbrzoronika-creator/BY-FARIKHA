@@ -244,45 +244,200 @@
           </div>
         </div>
         <form id="settingsForm" class="editor-form">
+          <!-- 1. HERO SECTION -->
           <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
-            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Bagian Beranda (Hero Section)</p>
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ 1. Bagian Beranda (Hero Section)</p>
             
-            <label>Headline Judul Utama Beranda
-              <input id="settingHeroTitle" placeholder="Abadikan Janji Suci, Keanggunan Abadi.">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Teks Label / Eyebrow
+                <input id="settingHeroEyebrow" placeholder="KREATOR KONTEN PERNIKAHAN & ACARA">
+              </label>
+              <label>Wilayah Layanan Hero
+                <input id="settingHeroMetaArea" placeholder="Magetan · Madiun · Solo · Surabaya · Seluruh Indonesia">
+              </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Judul Baris Atas (Putih)
+                <input id="settingHeroTitleTop" placeholder="Abadikan Janji Suci,">
+              </label>
+              <label>Judul Baris Bawah (Emas Mengkilau)
+                <input id="settingHeroTitleGold" placeholder="Keanggunan Abadi.">
+              </label>
+            </div>
+
+            <label>Deskripsi Singkat / Lead Beranda
+              <textarea id="settingHeroLead" rows="2" placeholder="Menangkap setiap tatapan, senyuman, dan momen sakral..."></textarea>
             </label>
-            <label>Subjudul / Teks Deskripsi Beranda
-              <textarea id="settingHero" rows="2"></textarea>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Teks Tombol Reservasi
+                <input id="settingHeroBtnReserve" placeholder="Konsultasi & Reservasi Tanggal ↗">
+              </label>
+              <label>Teks Tombol Portofolio
+                <input id="settingHeroBtnPortfolio" placeholder="Lihat Portofolio Karya ↘">
+              </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Tag Kartu Mengambang (Float Tag)
+                <input id="settingHeroFloatTag" placeholder="EKSKLUSIF 24 JAM">
+              </label>
+              <label>Teks Kartu Mengambang
+                <input id="settingHeroFloatText" placeholder="Semua footage mentah & edited video diserahkan langsung H+1 acara.">
+              </label>
+            </div>
+
+            <label>Keterangan Perangkat & Waktu Penyerahan
+              <input id="settingHeroMetaDevice" placeholder="Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam">
+            </label>
+
+            <label>Teks Ticker Berjalan (Pisahkan dengan tanda · )
+              <input id="settingTickerText" placeholder="Sinematik 4K 60fps HDR · Penyerahan 24 Jam · Estetika Editorial Majalah · Reels Siap Tayang">
             </label>
           </div>
 
+          <!-- 2. ABOUT SECTION -->
           <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
-            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Bagian Tentang Kami & Perangkat (About)</p>
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ 2. Bagian Tentang Kami (About Section)</p>
             
-            <label>Judul Bagian Tentang Kami
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Teks Eyebrow Tentang Kami
+                <input id="settingAboutEyebrow" placeholder="FILOSOFI & DEDIKASI KAMI">
+              </label>
+              <label>Nama Penandatangan
+                <input id="settingAboutSigName" placeholder="Farikha">
+              </label>
+            </div>
+
+            <label>Judul Utama Tentang Kami
               <input id="settingAboutTitle" placeholder="Sentuhan Editorial dalam Setiap Rekaman Emosi">
             </label>
-            <label>Deskripsi Cerita Filosofi WCC.BYFARIHA
-              <textarea id="settingAbout" rows="3"></textarea>
+            <label>Subjudul Tentang Kami
+              <input id="settingAboutSubtitle" placeholder="Mendokumentasikan cinta dengan sentuhan majalah mewah dan emosi yang tulus.">
             </label>
-            <label>Keterangan Perangkat Eksklusif (iPhone)
-              <input id="settingDevice" placeholder="Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam">
+
+            <label>Judul Cerita Filosofi
+              <input id="settingAboutStoryTitle" placeholder="Mengapa WCC.BYFARIHA Hadir?">
+            </label>
+            <label>Teks Cerita Filosofi
+              <textarea id="settingAboutText" rows="3" placeholder="Kami percaya bahwa momen pernikahan bukan sekadar acara seremoni..."></textarea>
+            </label>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+              <label>Pilar 1: Judul
+                <input id="settingPillar1Title" placeholder="Eksklusif iPhone Pro 4K">
+              </label>
+              <label>Pilar 1: Deskripsi
+                <input id="settingPillar1Desc" placeholder="Direkam menggunakan perangkat iPhone seri Pro generasi terbaru...">
+              </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Pilar 2: Judul
+                <input id="settingPillar2Title" placeholder="Kecepatan 24 Jam (H+1)">
+              </label>
+              <label>Pilar 2: Deskripsi
+                <input id="settingPillar2Desc" placeholder="Seluruh ratusan rekaman mentah (raw clips) dan video siap tayang...">
+              </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Pilar 3: Judul
+                <input id="settingPillar3Title" placeholder="Estetika Editorial Majalah">
+              </label>
+              <label>Pilar 3: Deskripsi
+                <input id="settingPillar3Desc" placeholder="Komposisi sinematik bernuansa editorial majalah internasional...">
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. PACKAGES SECTION -->
+          <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ 3. Bagian Paket Layanan (Packages & Pricelist)</p>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Eyebrow Paket
+                <input id="settingPackagesEyebrow" placeholder="INVESTASI & PAKET LAYANAN">
+              </label>
+              <label>Judul Bagian Paket
+                <input id="settingPackagesTitle" placeholder="Daftar Paket & Layanan">
+              </label>
+            </div>
+
+            <label>Deskripsi Bagian Paket
+              <textarea id="settingPackagesDesc" rows="2" placeholder="Pilihan paket dokumentasi konten eksklusif yang dirancang fleksibel..."></textarea>
+            </label>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Judul Kotak Khusus / Luar Kota
+                <input id="settingCustomInquiryTitle" placeholder="Membutuhkan Paket Khusus untuk Luar Kota / Multi-Hari?">
+              </label>
+              <label>Deskripsi Kotak Khusus
+                <input id="settingCustomInquiryDesc" placeholder="Kami melayani pemesanan khusus untuk prewedding, lamaran...">
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. PORTFOLIO & REVIEWS -->
+          <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ 4. Bagian Portofolio & Ulasan Klien</p>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Eyebrow Portofolio
+                <input id="settingPortfolioEyebrow" placeholder="KARYA TERPILIH">
+              </label>
+              <label>Judul Portofolio
+                <input id="settingPortfolioTitle" placeholder="Arsip Dokumentasi">
+              </label>
+            </div>
+            <label>Deskripsi Portofolio
+              <input id="settingPortfolioDesc" placeholder="Kumpulan cuplikan cerita cinta, senyuman haru, dan detail estetika...">
+            </label>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+              <label>Eyebrow Testimoni
+                <input id="settingReviewsEyebrow" placeholder="TESTIMONI KLIEN">
+              </label>
+              <label>Judul Testimoni
+                <input id="settingReviewsTitle" placeholder="Cerita dari Para Pasangan">
+              </label>
+            </div>
+            <label>Deskripsi Testimoni
+              <input id="settingReviewsDesc" placeholder="Ungkapan tulus dari para pasangan yang telah mempercayakan momen sakral...">
+            </label>
+            <label>Ajakan Memberi Ulasan (CTA Prompt)
+              <input id="settingReviewCtaPrompt" placeholder="Pernah mempercayakan momen bahagia Anda bersama kami?">
             </label>
           </div>
 
+          <!-- 5. RESERVASI & FOOTER -->
           <div style="background:rgba(216,183,136,0.04); padding:18px; border:1px solid var(--border-card); border-radius:3px; margin-bottom:20px;">
-            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ Kontak & Wilayah Layanan</p>
+            <p style="color:var(--champagne); font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">✦ 5. Formulir Reservasi & Kontak Footer</p>
             
-            <label>Nomor WhatsApp Resmi (Contoh: 6281234567890)
-              <input id="settingWhatsApp" placeholder="628xxxxxxxxxx">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <label>Eyebrow Formulir Reservasi
+                <input id="settingBookingEyebrow" placeholder="RESERVASI JADWAL TANGGAL">
+              </label>
+              <label>Judul Formulir Reservasi
+                <input id="settingBookingTitle" placeholder="Mari Abadikan Hari Bahagiamu">
+              </label>
+            </div>
+            <label>Deskripsi / Subjudul Formulir
+              <textarea id="settingBookingDesc" rows="2" placeholder="Silakan lengkapi formulir di bawah ini untuk memeriksa ketersediaan tanggal..."></textarea>
             </label>
-            <label>Tautan Akun Instagram
-              <input id="settingInstagram" type="url" placeholder="https://www.instagram.com/wcc.byfariha/">
-            </label>
-            <label>Cakupan Wilayah Layanan
-              <textarea id="settingArea" rows="2"></textarea>
-            </label>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+              <label>Nomor WhatsApp Resmi (Contoh: 6281234567890)
+                <input id="settingWhatsApp" placeholder="628xxxxxxxxxx">
+              </label>
+              <label>Tautan Akun Instagram
+                <input id="settingInstagram" type="url" placeholder="https://www.instagram.com/wcc.byfariha/">
+              </label>
+            </div>
+
             <label>Kutipan Puitis Footer
-              <textarea id="settingFooterQuote" rows="2" placeholder="“Mengabadikan keindahan kisah cinta Anda...”"></textarea>
+              <textarea id="settingFooterQuote" rows="2" placeholder="“Mengabadikan getaran cinta, keindahan detail gaun, dan tawa tulus dalam setiap bingkai sinematik yang abadi.”"></textarea>
             </label>
           </div>
 

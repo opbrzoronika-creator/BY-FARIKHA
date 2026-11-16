@@ -647,15 +647,61 @@ async function loadSettings() {
 
   const merged = { ...localExtra, ...embeddedMeta, ...(data || {}), about_text: cleanAbout };
 
-  if ($("settingHeroTitle")) $("settingHeroTitle").value = merged.hero_title || "Abadikan Janji Suci, Keanggunan Abadi.";
-  if ($("settingHero")) $("settingHero").value = merged.hero_text || "";
-  if ($("settingAboutTitle")) $("settingAboutTitle").value = merged.about_title || "Sentuhan Editorial dalam Setiap Rekaman Emosi";
-  if ($("settingAbout")) $("settingAbout").value = merged.about_text || "";
-  if ($("settingDevice")) $("settingDevice").value = merged.device_text || "Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam";
-  if ($("settingWhatsApp")) $("settingWhatsApp").value = merged.whatsapp_number || "";
-  if ($("settingInstagram")) $("settingInstagram").value = merged.instagram_url || "https://www.instagram.com/wcc.byfariha/";
-  if ($("settingArea")) $("settingArea").value = merged.area_text || "";
-  if ($("settingFooterQuote")) $("settingFooterQuote").value = merged.footer_quote || "“Mengabadikan keindahan kisah cinta Anda dengan kemewahan yang tenang dan keanggunan abadi.”";
+  const setVal = (id, val, def = "") => {
+    const el = $(id);
+    if (el) el.value = (val !== undefined && val !== null && val !== "") ? val : def;
+  };
+
+  // 1. HERO SECTION
+  setVal("settingHeroEyebrow", merged.hero_eyebrow, "KREATOR KONTEN PERNIKAHAN & ACARA");
+  setVal("settingHeroMetaArea", merged.hero_meta_area || merged.area_text, "Magetan · Madiun · Solo · Surabaya · Seluruh Indonesia");
+  setVal("settingHeroTitleTop", merged.hero_title_top, "Abadikan Janji Suci,");
+  setVal("settingHeroTitleGold", merged.hero_title_gold, "Keanggunan Abadi.");
+  setVal("settingHeroLead", merged.hero_lead || merged.hero_text, "Menangkap setiap tatapan, senyuman, dan momen sakral hari bahagia Anda dalam balutan estetika editorial sinematik 4K yang berkelas dan abadi.");
+  setVal("settingHeroBtnReserve", merged.hero_btn_reserve, "Konsultasi & Reservasi Tanggal ↗");
+  setVal("settingHeroBtnPortfolio", merged.hero_btn_portfolio, "Lihat Portofolio Karya ↘");
+  setVal("settingHeroFloatTag", merged.hero_float_tag, "EKSKLUSIF 24 JAM");
+  setVal("settingHeroFloatText", merged.hero_float_text, "Semua footage mentah & edited video diserahkan langsung H+1 acara.");
+  setVal("settingHeroMetaDevice", merged.hero_meta_device || merged.device_text, "Eksklusif iPhone Pro 4K 60fps HDR · Penyerahan File 24 Jam");
+  setVal("settingTickerText", merged.ticker_text, "Sinematik 4K 60fps HDR · Penyerahan 24 Jam · Estetika Editorial Majalah · Reels Siap Tayang");
+
+  // 2. ABOUT SECTION
+  setVal("settingAboutEyebrow", merged.about_eyebrow, "FILOSOFI & DEDIKASI KAMI");
+  setVal("settingAboutSigName", merged.about_sig_name, "Farikha");
+  setVal("settingAboutTitle", merged.about_title, "Sentuhan Editorial dalam Setiap Rekaman Emosi");
+  setVal("settingAboutSubtitle", merged.about_subtitle, "Mendokumentasikan cinta dengan sentuhan majalah mewah dan emosi yang tulus.");
+  setVal("settingAboutStoryTitle", merged.about_story_title, "Mengapa WCC.BYFARIHA Hadir?");
+  setVal("settingAboutText", merged.about_text, "Kami percaya bahwa momen pernikahan bukan sekadar acara seremoni, melainkan babak baru yang sarat akan getaran cinta, rasa haru, dan detail estetika berharga. WCC.BYFARIHA hadir sebagai kreator konten pernikahan eksklusif yang memadukan kehangatan momen intim dengan visual berkelas layaknya editorial majalah pernikahan dunia.");
+  setVal("settingPillar1Title", merged.pillar1_title, "Eksklusif iPhone Pro 4K");
+  setVal("settingPillar1Desc", merged.pillar1_desc, "Direkam menggunakan perangkat iPhone seri Pro generasi terbaru dengan resolusi 4K 60fps HDR untuk ketajaman visual terbaik.");
+  setVal("settingPillar2Title", merged.pillar2_title, "Kecepatan 24 Jam (H+1)");
+  setVal("settingPillar2Desc", merged.pillar2_desc, "Seluruh ratusan rekaman mentah (raw clips) dan video siap tayang diserahkan maksimal 24 jam setelah acara.");
+  setVal("settingPillar3Title", merged.pillar3_title, "Estetika Editorial Majalah");
+  setVal("settingPillar3Desc", merged.pillar3_desc, "Komposisi sinematik bernuansa editorial majalah internasional, menangkap keanggunan busana, tatapan mata, dan detail sakral.");
+
+  // 3. PACKAGES SECTION
+  setVal("settingPackagesEyebrow", merged.packages_eyebrow, "INVESTASI & PAKET LAYANAN");
+  setVal("settingPackagesTitle", merged.packages_title, "Daftar Paket & Layanan");
+  setVal("settingPackagesDesc", merged.packages_desc, "Pilihan paket dokumentasi konten eksklusif yang dirancang fleksibel untuk pernikahan intim, akad nikah, siraman, hingga resepsi akbar.");
+  setVal("settingCustomInquiryTitle", merged.custom_inquiry_title, "Membutuhkan Paket Khusus untuk Luar Kota / Multi-Hari?");
+  setVal("settingCustomInquiryDesc", merged.custom_inquiry_desc, "Kami melayani pemesanan khusus untuk prewedding, lamaran, akad terpisah, serta destination wedding di seluruh Indonesia.");
+
+  // 4. PORTFOLIO & REVIEWS
+  setVal("settingPortfolioEyebrow", merged.portfolio_eyebrow, "KARYA TERPILIH");
+  setVal("settingPortfolioTitle", merged.portfolio_title, "Arsip Dokumentasi");
+  setVal("settingPortfolioDesc", merged.portfolio_desc, "Kumpulan cuplikan cerita cinta, senyuman haru, dan detail estetika yang telah kami abadikan.");
+  setVal("settingReviewsEyebrow", merged.reviews_eyebrow, "TESTIMONI KLIEN");
+  setVal("settingReviewsTitle", merged.reviews_title, "Cerita dari Para Pasangan");
+  setVal("settingReviewsDesc", merged.reviews_desc, "Ungkapan tulus dari para pasangan yang telah mempercayakan momen sakral pernikahan mereka kepada WCC.BYFARIHA.");
+  setVal("settingReviewCtaPrompt", merged.review_cta_prompt, "Pernah mempercayakan momen bahagia Anda bersama kami?");
+
+  // 5. RESERVASI & FOOTER
+  setVal("settingBookingEyebrow", merged.booking_eyebrow, "RESERVASI JADWAL TANGGAL");
+  setVal("settingBookingTitle", merged.booking_title, "Mari Abadikan Hari Bahagiamu");
+  setVal("settingBookingDesc", merged.booking_desc, "Silakan lengkapi formulir di bawah ini untuk memeriksa ketersediaan tanggal dan berkonsultasi langsung melalui WhatsApp resmi WCC.BYFARIHA.");
+  setVal("settingWhatsApp", merged.whatsapp_number, "");
+  setVal("settingInstagram", merged.instagram_url, "https://www.instagram.com/wcc.byfariha/");
+  setVal("settingFooterQuote", merged.footer_quote, "“Mengabadikan getaran cinta, keindahan detail gaun, dan tawa tulus dalam setiap bingkai sinematik yang abadi.”");
 }
 
 $("settingsForm").onsubmit = async e => {
@@ -665,32 +711,74 @@ $("settingsForm").onsubmit = async e => {
   const submitBtn = $("settingsSubmitBtn") || $("settingsForm").querySelector('button[type="submit"]');
   if (submitBtn) submitBtn.disabled = true;
 
+  const getV = (id) => $(id) ? $(id).value.trim() : "";
+
   const extra = {
-    hero_title: $("settingHeroTitle") ? $("settingHeroTitle").value.trim() : "",
-    hero_text: $("settingHero").value.trim(),
-    about_title: $("settingAboutTitle") ? $("settingAboutTitle").value.trim() : "",
-    about_text: $("settingAbout").value.trim(),
-    device_text: $("settingDevice") ? $("settingDevice").value.trim() : "",
-    footer_quote: $("settingFooterQuote") ? $("settingFooterQuote").value.trim() : "",
-    whatsapp_number: $("settingWhatsApp").value.replace(/\D/g, ""),
-    instagram_url: $("settingInstagram").value.trim(),
-    area_text: $("settingArea").value.trim()
+    // Hero
+    hero_eyebrow: getV("settingHeroEyebrow"),
+    hero_meta_area: getV("settingHeroMetaArea"),
+    hero_title_top: getV("settingHeroTitleTop"),
+    hero_title_gold: getV("settingHeroTitleGold"),
+    hero_lead: getV("settingHeroLead"),
+    hero_btn_reserve: getV("settingHeroBtnReserve"),
+    hero_btn_portfolio: getV("settingHeroBtnPortfolio"),
+    hero_float_tag: getV("settingHeroFloatTag"),
+    hero_float_text: getV("settingHeroFloatText"),
+    hero_meta_device: getV("settingHeroMetaDevice"),
+    ticker_text: getV("settingTickerText"),
+
+    // About
+    about_eyebrow: getV("settingAboutEyebrow"),
+    about_sig_name: getV("settingAboutSigName"),
+    about_title: getV("settingAboutTitle"),
+    about_subtitle: getV("settingAboutSubtitle"),
+    about_story_title: getV("settingAboutStoryTitle"),
+    about_text: getV("settingAboutText"),
+    pillar1_title: getV("settingPillar1Title"),
+    pillar1_desc: getV("settingPillar1Desc"),
+    pillar2_title: getV("settingPillar2Title"),
+    pillar2_desc: getV("settingPillar2Desc"),
+    pillar3_title: getV("settingPillar3Title"),
+    pillar3_desc: getV("settingPillar3Desc"),
+
+    // Packages
+    packages_eyebrow: getV("settingPackagesEyebrow"),
+    packages_title: getV("settingPackagesTitle"),
+    packages_desc: getV("settingPackagesDesc"),
+    custom_inquiry_title: getV("settingCustomInquiryTitle"),
+    custom_inquiry_desc: getV("settingCustomInquiryDesc"),
+
+    // Portfolio & Reviews
+    portfolio_eyebrow: getV("settingPortfolioEyebrow"),
+    portfolio_title: getV("settingPortfolioTitle"),
+    portfolio_desc: getV("settingPortfolioDesc"),
+    reviews_eyebrow: getV("settingReviewsEyebrow"),
+    reviews_title: getV("settingReviewsTitle"),
+    reviews_desc: getV("settingReviewsDesc"),
+    review_cta_prompt: getV("settingReviewCtaPrompt"),
+
+    // Booking & Footer
+    booking_eyebrow: getV("settingBookingEyebrow"),
+    booking_title: getV("settingBookingTitle"),
+    booking_desc: getV("settingBookingDesc"),
+    whatsapp_number: getV("settingWhatsApp").replace(/\D/g, ""),
+    instagram_url: getV("settingInstagram"),
+    footer_quote: getV("settingFooterQuote"),
+
+    // Standard column backward compat
+    hero_text: getV("settingHeroLead"),
+    area_text: getV("settingHeroMetaArea"),
+    device_text: getV("settingHeroMetaDevice")
   };
 
-  // Simpan ke localStorage sebagai backup cepat
+  // Simpan ke localStorage sebagai backup lokal instan
   localStorage.setItem("wcc_custom_settings", JSON.stringify(extra));
 
   // Siapkan baris standar dengan metadata tersemat rapi di about_text
-  const metaObj = {
-    hero_title: extra.hero_title,
-    about_title: extra.about_title,
-    device_text: extra.device_text,
-    footer_quote: extra.footer_quote
-  };
   const standardRowWithMeta = {
     id: 1,
     hero_text: extra.hero_text,
-    about_text: `${extra.about_text}\n<!--WCC_META:${JSON.stringify(metaObj)}-->`,
+    about_text: `${extra.about_text}\n<!--WCC_META:${JSON.stringify(extra)}-->`,
     whatsapp_number: extra.whatsapp_number,
     instagram_url: extra.instagram_url,
     area_text: extra.area_text
@@ -699,7 +787,7 @@ $("settingsForm").onsubmit = async e => {
   // Coba upsert dengan field lengkap
   let { error } = await db.from("site_settings").upsert({ id: 1, ...extra });
   if (error && (error.code === "42703" || (error.message && error.message.includes("column")))) {
-    // Jika ada kolom baru yang belum ada di schema Postgres, gunakan row standar dengan metadata tersemat
+    // Jika ada kolom kustom yang belum ada di schema Postgres, fallback ke row standar dengan metadata tersemat
     const retry = await db.from("site_settings").upsert(standardRowWithMeta);
     error = retry.error;
   }

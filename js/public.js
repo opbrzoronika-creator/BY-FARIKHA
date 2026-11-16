@@ -115,10 +115,7 @@ const isSupabaseReady = () => typeof window.isSupabaseConfigured === "function"
 
 // Inisialisasi saat dokumen siap
 document.addEventListener("DOMContentLoaded", () => {
-  // Halaman Perkenalan (Intro Screen)
-  initIntroScreen();
-
-  // Engine Tema (Gelap / Terang)
+  // Engine Tema (Gelap Permanen)
   initThemeEngine();
 
   // Tahun Hak Cipta di Footer
@@ -151,94 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Muat Data (Dari Supabase atau Data Cadangan)
   loadSiteData();
 });
-
-/* ==========================================================================
-   HALAMAN PERKENALAN (EDITORIAL INTRO CURTAIN SCREEN)
-   ========================================================================== */
-function initIntroScreen() {
-  const intro = document.getElementById("introScreen");
-  const enterBtn = document.getElementById("introEnterBtn");
-  const replayBtn = document.getElementById("replayIntroBtn");
-
-  if (!intro) return;
-
-  // Kunci scroll halaman saat intro aktif
-  document.body.classList.add("intro-active");
-
-  function closeIntro() {
-    intro.classList.add("closing");
-    document.body.classList.remove("intro-active");
-    // Trigger scroll animations untuk section hero
-    setTimeout(() => {
-      window.dispatchEvent(new Event("scroll"));
-    }, 400);
-  }
-
-  function openIntro() {
-    intro.classList.remove("closing");
-    document.body.classList.add("intro-active");
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-
-  if (enterBtn) {
-    enterBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      closeIntro();
-      // Gulir mulus langsung ke halaman paling atas
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
-
-  // Klik di luar kartu intro (backdrop) juga menutup intro
-  intro.addEventListener("click", (e) => {
-    if (e.target === intro || e.target.classList.contains("intro-ambient-glow")) {
-      closeIntro();
-    }
-  });
-
-  // Tombol keyboard (Enter, Spasi, Escape, Panah Bawah)
-  window.addEventListener("keydown", (e) => {
-    if (!intro.classList.contains("closing") && ["Enter", " ", "Escape", "ArrowDown"].includes(e.key)) {
-      closeIntro();
-    }
-  });
-
-  // Sentuhan gulir layar sentuh (Swipe up pada HP)
-  let touchStartY = 0;
-  intro.addEventListener("touchstart", (e) => {
-    if (e.touches && e.touches.length > 0) {
-      touchStartY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  intro.addEventListener("touchend", (e) => {
-    if (e.changedTouches && e.changedTouches.length > 0) {
-      const touchEndY = e.changedTouches[0].clientY;
-      if (touchStartY - touchEndY > 45) {
-        closeIntro();
-      }
-    }
-  }, { passive: true });
-
-  // Gulir mouse wheel
-  intro.addEventListener("wheel", (e) => {
-    if (e.deltaY > 15) {
-      closeIntro();
-    }
-  }, { passive: true });
-
-  // Tombol putar ulang intro di header
-  if (replayBtn) {
-    replayBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      openIntro();
-    });
-  }
-
-  // Global helper
-  window.openIntroScreen = openIntro;
-  window.closeIntroScreen = closeIntro;
-}
 
 /* ==========================================================================
    ENGINE TEMA (KHUSUS MODE GELAP / DARK LUXURY EDITORIAL ONLY)
@@ -494,57 +403,96 @@ function applySettings(s) {
 
   const merged = { ...DATA_AWAL.settings, ...embeddedMeta, ...localExtra, ...s, about_text: cleanAbout };
 
-  if (merged.hero_title) {
-    const el = document.getElementById("heroTitle");
-    if (el) el.innerHTML = escapeHtml(merged.hero_title).replace(/\n/g, "<br>");
+  const setText = (id, val) => {
+    if (!val && val !== "") return;
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+
+  const setHtml = (id, val) => {
+    if (!val && val !== "") return;
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+  };
+
+  // 1. HERO SECTION
+  if (merged.hero_eyebrow) setText("heroEyebrowText", merged.hero_eyebrow);
+  if (merged.hero_title_top) setText("heroTitleTop", merged.hero_title_top);
+  if (merged.hero_title_gold) setText("heroTitleGold", merged.hero_title_gold);
+  if (merged.hero_title && !merged.hero_title_top && !merged.hero_title_gold) {
+    const parts = merged.hero_title.split("\n");
+    if (parts.length > 1) {
+      setText("heroTitleTop", parts[0]);
+      setText("heroTitleGold", parts.slice(1).join(" "));
+    } else {
+      setText("heroTitleGold", merged.hero_title);
+    }
   }
-  if (merged.hero_text) {
-    const el = document.getElementById("heroText");
-    if (el) el.textContent = merged.hero_text;
+  if (merged.hero_lead || merged.hero_text) setText("heroLead", merged.hero_lead || merged.hero_text);
+  if (merged.hero_btn_reserve) setText("heroBtnReserve", merged.hero_btn_reserve);
+  if (merged.hero_btn_portfolio) setText("heroBtnPortfolio", merged.hero_btn_portfolio);
+  if (merged.hero_meta_area || merged.area_text) setText("heroMetaArea", merged.hero_meta_area || merged.area_text);
+  if (merged.hero_meta_device || merged.device_text) setText("heroMetaDevice", merged.hero_meta_device || merged.device_text);
+  if (merged.hero_float_tag) setText("heroFloatTag", merged.hero_float_tag);
+  if (merged.hero_float_text) setText("heroFloatText", merged.hero_float_text);
+  if (merged.ticker_text) {
+    const ticker = document.getElementById("tickerTrack");
+    if (ticker) {
+      const items = merged.ticker_text.split("·").map(t => t.trim()).filter(Boolean);
+      if (items.length > 0) {
+        ticker.innerHTML = items.map(t => `<span>${escapeHtml(t)}</span><span class="ticker-star">✦</span>`).join(" ");
+      }
+    }
   }
-  if (merged.about_title) {
-    const el = document.getElementById("aboutTitle");
-    if (el) el.innerHTML = escapeHtml(merged.about_title);
-  }
-  if (merged.about_text) {
-    const el = document.getElementById("aboutText");
-    if (el) el.textContent = merged.about_text;
-  }
-  if (merged.device_text) {
-    const d1 = document.getElementById("heroDeviceText");
-    if (d1) d1.textContent = merged.device_text;
-    const d2 = document.getElementById("aboutDeviceDesc");
-    if (d2) d2.textContent = merged.device_text;
-  }
-  if (merged.footer_quote) {
-    const fq = document.getElementById("footerQuote");
-    if (fq) fq.textContent = merged.footer_quote;
-  }
-  if (merged.area_text) {
-    const heroArea = document.getElementById("heroArea");
-    if (heroArea) heroArea.textContent = merged.area_text;
-    const bookingArea = document.getElementById("bookingAreaNotice");
-    if (bookingArea) bookingArea.textContent = merged.area_text;
-  }
+
+  // 2. ABOUT SECTION
+  if (merged.about_eyebrow) setText("aboutEyebrow", merged.about_eyebrow);
+  if (merged.about_title) setHtml("aboutTitle", merged.about_title);
+  if (merged.about_subtitle) setText("aboutSubtitle", merged.about_subtitle);
+  if (merged.about_story_title) setText("aboutStoryTitle", merged.about_story_title);
+  if (merged.about_text) setText("aboutText", merged.about_text);
+  if (merged.pillar1_title) setText("pillar1Title", merged.pillar1_title);
+  if (merged.pillar1_desc) setText("pillar1Desc", merged.pillar1_desc);
+  if (merged.pillar2_title) setText("pillar2Title", merged.pillar2_title);
+  if (merged.pillar2_desc) setText("pillar2Desc", merged.pillar2_desc);
+  if (merged.pillar3_title) setText("pillar3Title", merged.pillar3_title);
+  if (merged.pillar3_desc) setText("pillar3Desc", merged.pillar3_desc);
+  if (merged.about_sig_name) setText("aboutSigName", merged.about_sig_name);
+
+  // 3. PACKAGES (PRICELIST) SECTION
+  if (merged.packages_eyebrow) setText("packagesEyebrow", merged.packages_eyebrow);
+  if (merged.packages_title) setHtml("packagesTitle", merged.packages_title);
+  if (merged.packages_desc) setText("packagesDesc", merged.packages_desc);
+  if (merged.custom_inquiry_title) setText("customInquiryTitle", merged.custom_inquiry_title);
+  if (merged.custom_inquiry_desc) setText("customInquiryDesc", merged.custom_inquiry_desc);
+
+  // 4. PORTFOLIO SECTION
+  if (merged.portfolio_eyebrow) setText("portfolioEyebrow", merged.portfolio_eyebrow);
+  if (merged.portfolio_title) setHtml("portfolioTitle", merged.portfolio_title);
+  if (merged.portfolio_desc) setText("portfolioDesc", merged.portfolio_desc);
+
+  // 5. REVIEWS SECTION
+  if (merged.reviews_eyebrow) setText("reviewsEyebrow", merged.reviews_eyebrow);
+  if (merged.reviews_title) setHtml("reviewsTitle", merged.reviews_title);
+  if (merged.reviews_desc) setText("reviewsDesc", merged.reviews_desc);
+  if (merged.review_cta_prompt) setText("reviewCtaPrompt", merged.review_cta_prompt);
+
+  // 6. BOOKING SECTION
+  if (merged.booking_eyebrow) setText("bookingEyebrow", merged.booking_eyebrow);
+  if (merged.booking_title) setHtml("bookingTitle", merged.booking_title);
+  if (merged.booking_desc) setText("bookingDesc", merged.booking_desc);
+
+  // 7. FOOTER & SOCIALS
+  if (merged.footer_quote) setText("footerQuote", merged.footer_quote);
   if (merged.whatsapp_number) {
     currentWhatsAppNumber = merged.whatsapp_number.replace(/\D/g, "");
     const waText = encodeURIComponent("Halo WCC.BYFARIHA, saya ingin konsultasi layanan wedding content creator.");
     const waLink = document.getElementById("directWaLink");
-    if (waLink) {
-      waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
-    }
+    if (waLink) waLink.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
     const floatWa = document.getElementById("floatingWaBtn");
-    if (floatWa) {
-      floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
-    }
-    const headerWa = document.getElementById("headerWaBtn");
-    if (headerWa) {
-      headerWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
-    }
+    if (floatWa) floatWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
     const footerWa = document.getElementById("footerWaLink");
-    if (footerWa) {
-      footerWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
-    }
+    if (footerWa) footerWa.href = `https://wa.me/${currentWhatsAppNumber}?text=${waText}`;
   }
   if (merged.instagram_url) {
     const igLink = document.getElementById("directIgLink");
@@ -554,9 +502,7 @@ function applySettings(s) {
       igLink.textContent = `@${cleanHandle} ↗`;
     }
     const footerIg = document.getElementById("footerIgLink");
-    if (footerIg) {
-      footerIg.href = merged.instagram_url;
-    }
+    if (footerIg) footerIg.href = merged.instagram_url;
   }
 }
 
