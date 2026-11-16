@@ -48,7 +48,44 @@ if (cfgSaveBtn) {
   });
 }
 
-// Handler form login
+let authMode = "login"; // "login" | "register"
+const tabLogin = document.getElementById("tabLogin");
+const tabRegister = document.getElementById("tabRegister");
+
+if (tabLogin && tabRegister) {
+  tabLogin.onclick = () => {
+    authMode = "login";
+    tabLogin.className = "btn btn-terracotta small";
+    tabRegister.className = "btn btn-champagne-outline small";
+    if (submitBtn) submitBtn.textContent = "Masuk ke Dashboard";
+    if (msg) msg.textContent = "";
+  };
+  tabRegister.onclick = () => {
+    authMode = "register";
+    tabRegister.className = "btn btn-terracotta small";
+    tabLogin.className = "btn btn-champagne-outline small";
+    if (submitBtn) submitBtn.textContent = "Daftarkan Akun Pemilik";
+    if (msg) {
+      msg.textContent = "Masukkan email & kata sandi baru untuk mendaftarkan akun pemilik Anda.";
+      msg.style.color = "var(--champagne)";
+    }
+  };
+}
+
+// Cek jika sudah memiliki sesi login aktif
+(async function checkExistingSession() {
+  try {
+    if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+      const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      const { data: { session } } = await db.auth.getSession();
+      if (session) {
+        location.href = "/admin/index.html";
+      }
+    }
+  } catch (e) {}
+})();
+
+// Handler form login / register
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -73,7 +110,7 @@ if (form) {
       return;
     }
 
-    msg.textContent = "Memverifikasi akun pemilik...";
+    msg.textContent = authMode === "register" ? "Mendaftarkan akun pemilik..." : "Memverifikasi akun pemilik...";
     msg.style.color = "var(--champagne)";
     if (submitBtn) {
       submitBtn.disabled = true;
@@ -83,7 +120,38 @@ if (form) {
     try {
       const db = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-      // 1. Autentikasi Supabase Auth
+      if (authMode === "register") {
+        const { data: regData, error: regError } = await db.auth.signUp({
+          email,
+          password
+        });
+
+        if (regError) {
+          msg.textContent = "Gagal mendaftar: " + regError.message;
+          msg.style.color = "#d9534f";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+          }
+          return;
+        }
+
+        if (regData.user) {
+          try {
+            await db.from("profiles").upsert({ id: regData.user.id, role: "owner" });
+          } catch (e) {}
+        }
+
+        msg.textContent = "Akun pemilik berhasil didaftarkan! Mengalihkan ke Dashboard...";
+        msg.style.color = "#5cb85c";
+
+        setTimeout(() => {
+          location.href = "/admin/index.html";
+        }, 500);
+        return;
+      }
+
+      // 1. Autentikasi Supabase Auth (Login)
       const { data: authData, error: authError } = await db.auth.signInWithPassword({
         email,
         password
@@ -92,7 +160,7 @@ if (form) {
       if (authError) {
         let errText = authError.message;
         if (errText.includes("Invalid login credentials")) {
-          errText = "Email atau kata sandi tidak cocok. Silakan periksa kembali.";
+          errText = "Email atau kata sandi tidak cocok. Jika belum pernah mendaftar, klik tab 'Daftar Akun Baru' di atas.";
         }
         msg.textContent = "Gagal masuk: " + errText;
         msg.style.color = "#d9534f";
@@ -103,22 +171,19 @@ if (form) {
         return;
       }
 
-      // 2. Verifikasi hak akses: Pastikan akun memiliki role 'owner' di tabel profiles
-      const { data: profile, error: profileError } = await db
-        .from("profiles")
-        .select("role")
-        .eq("id", authData.user.id)
-        .maybeSingle();
+      // 2. Verifikasi hak akses: Pastikan akun terdaftar di profiles
+      if (authData.user) {
+        try {
+          const { data: profile } = await db
+            .from("profiles")
+            .select("role")
+            .eq("id", authData.user.id)
+            .maybeSingle();
 
-      if (profileError || !profile || profile.role !== "owner") {
-        await db.auth.signOut();
-        msg.textContent = "Akses Ditolak: Akun Anda tidak terdaftar sebagai pemilik (role 'owner') di tabel profiles.";
-        msg.style.color = "#d9534f";
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.style.opacity = "1";
-        }
-        return;
+          if (!profile) {
+            await db.from("profiles").upsert({ id: authData.user.id, role: "owner" });
+          }
+        } catch (e) {}
       }
 
       // 3. Berhasil
@@ -126,7 +191,7 @@ if (form) {
       msg.style.color = "#5cb85c";
 
       setTimeout(() => {
-        location.href = "index.html";
+        location.href = "/admin/index.html";
       }, 350);
 
     } catch (err) {

@@ -227,21 +227,66 @@ input, select, textarea {
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
   text-decoration: none;
 }
 
 .brand-logo-img {
-  height: 44px;
-  width: auto;
-  max-width: 140px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
+  flex-shrink: 0;
   display: block;
   transition: transform var(--duration-fast) ease, opacity var(--duration-fast) ease;
 }
 
 .brand:hover .brand-logo-img {
-  transform: scale(1.03);
+  transform: scale(1.05);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.brand-title b {
+  font-weight: 600;
+  color: var(--champagne);
+}
+
+.brand-sub {
+  font-family: var(--font-body);
+  font-size: 8.5px;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-top: 1px;
+}
+
+.owner-access-link {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-decoration: none;
+  opacity: 0.6;
+  margin-left: 8px;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.owner-access-link:hover {
+  opacity: 1;
+  color: var(--champagne);
+  text-decoration: underline;
 }
 
 .footer-logo-img {
@@ -281,32 +326,6 @@ input, select, textarea {
   transform: rotate(6deg) scale(1.04);
   border-color: var(--terracotta);
   color: var(--terracotta);
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-title {
-  font-family: var(--font-heading);
-  font-size: 17px;
-  letter-spacing: 1.2px;
-  color: var(--text-primary);
-  line-height: 1.15;
-}
-
-.brand-title b {
-  font-weight: 600;
-  color: var(--champagne);
-}
-
-.brand-sub {
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
 }
 
 /* Nav Menu Drawer (Mobile-First Centered & Elegant) */
