@@ -657,8 +657,23 @@ async function loadSettings() {
   // 1. HERO SECTION
   setVal("settingHeroEyebrow", merged.hero_eyebrow, "KREATOR KONTEN PERNIKAHAN & ACARA");
   setVal("settingHeroMetaArea", merged.hero_meta_area || merged.area_text, "Magetan · Madiun · Solo · Surabaya · Seluruh Indonesia");
-  setVal("settingHeroTitleTop", merged.hero_title_top, "Abadikan Janji Suci,");
-  setVal("settingHeroTitleGold", merged.hero_title_gold, "Keanggunan Abadi.");
+  let topTitle = merged.hero_title_top;
+  let goldTitle = merged.hero_title_gold;
+  if (!topTitle && !goldTitle && merged.hero_title) {
+    if (merged.hero_title.includes("\n")) {
+      const parts = merged.hero_title.split("\n");
+      topTitle = parts[0].trim();
+      goldTitle = parts.slice(1).join(" ").trim();
+    } else if (merged.hero_title.includes(",")) {
+      const cIdx = merged.hero_title.indexOf(",");
+      topTitle = merged.hero_title.substring(0, cIdx + 1).trim();
+      goldTitle = merged.hero_title.substring(cIdx + 1).trim();
+    } else {
+      goldTitle = merged.hero_title.trim();
+    }
+  }
+  setVal("settingHeroTitleTop", topTitle, "Abadikan Janji Suci,");
+  setVal("settingHeroTitleGold", goldTitle, "Keanggunan Abadi.");
   setVal("settingHeroLead", merged.hero_lead || merged.hero_text, "Menangkap setiap tatapan, senyuman, dan momen sakral hari bahagia Anda dalam balutan estetika editorial sinematik 4K yang berkelas dan abadi.");
   setVal("settingHeroBtnReserve", merged.hero_btn_reserve, "Konsultasi & Reservasi Tanggal ↗");
   setVal("settingHeroBtnPortfolio", merged.hero_btn_portfolio, "Lihat Portofolio Karya ↘");

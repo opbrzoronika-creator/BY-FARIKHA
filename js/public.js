@@ -416,23 +416,53 @@ function applySettings(s) {
   };
 
   // 1. HERO SECTION
-  if (merged.hero_eyebrow) setText("heroEyebrowText", merged.hero_eyebrow);
-  if (merged.hero_title_top) setText("heroTitleTop", merged.hero_title_top);
-  if (merged.hero_title_gold) setText("heroTitleGold", merged.hero_title_gold);
-  if (merged.hero_title && !merged.hero_title_top && !merged.hero_title_gold) {
-    const parts = merged.hero_title.split("\n");
-    if (parts.length > 1) {
+  if (merged.hero_eyebrow) {
+    setText("heroEyebrow", merged.hero_eyebrow);
+    setText("heroEyebrowText", merged.hero_eyebrow);
+  }
+
+  // Handle hero title splits without duplication
+  if (merged.hero_title_top) {
+    setText("heroTitleTop", merged.hero_title_top);
+  }
+  if (merged.hero_title_gold) {
+    setText("heroTitleGold", merged.hero_title_gold);
+  }
+  if (merged.hero_title && (!merged.hero_title_top || !merged.hero_title_gold)) {
+    const raw = (merged.hero_title || "").trim();
+    if (raw.includes("\n")) {
+      const parts = raw.split("\n").map(p => p.trim()).filter(Boolean);
       setText("heroTitleTop", parts[0]);
       setText("heroTitleGold", parts.slice(1).join(" "));
+    } else if (raw.includes(",")) {
+      const commaIdx = raw.indexOf(",");
+      const topPart = raw.substring(0, commaIdx + 1).trim();
+      const goldPart = raw.substring(commaIdx + 1).trim();
+      setText("heroTitleTop", topPart);
+      setText("heroTitleGold", goldPart);
     } else {
-      setText("heroTitleGold", merged.hero_title);
+      setText("heroTitleTop", "");
+      setText("heroTitleGold", raw);
     }
   }
-  if (merged.hero_lead || merged.hero_text) setText("heroLead", merged.hero_lead || merged.hero_text);
+
+  if (merged.hero_lead || merged.hero_text) {
+    const leadVal = merged.hero_lead || merged.hero_text;
+    setText("heroText", leadVal);
+    setText("heroLead", leadVal);
+  }
   if (merged.hero_btn_reserve) setText("heroBtnReserve", merged.hero_btn_reserve);
   if (merged.hero_btn_portfolio) setText("heroBtnPortfolio", merged.hero_btn_portfolio);
-  if (merged.hero_meta_area || merged.area_text) setText("heroMetaArea", merged.hero_meta_area || merged.area_text);
-  if (merged.hero_meta_device || merged.device_text) setText("heroMetaDevice", merged.hero_meta_device || merged.device_text);
+  if (merged.hero_meta_area || merged.area_text) {
+    const areaVal = merged.hero_meta_area || merged.area_text;
+    setText("heroArea", areaVal);
+    setText("heroMetaArea", areaVal);
+  }
+  if (merged.hero_meta_device || merged.device_text) {
+    const devVal = merged.hero_meta_device || merged.device_text;
+    setText("heroDeviceText", devVal);
+    setText("heroMetaDevice", devVal);
+  }
   if (merged.hero_float_tag) setText("heroFloatTag", merged.hero_float_tag);
   if (merged.hero_float_text) setText("heroFloatText", merged.hero_float_text);
   if (merged.ticker_text) {
@@ -498,7 +528,10 @@ function applySettings(s) {
     const igLink = document.getElementById("directIgLink");
     if (igLink) {
       igLink.href = merged.instagram_url;
-      const cleanHandle = merged.instagram_url.replace("https://www.instagram.com/", "").replace(/\/$/, "");
+      const cleanHandle = merged.instagram_url
+        .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+        .split(/[?#]/)[0]
+        .replace(/\/$/, "");
       igLink.textContent = `@${cleanHandle} ↗`;
     }
     const footerIg = document.getElementById("footerIgLink");

@@ -229,14 +229,17 @@ input, select, textarea {
   align-items: center;
   gap: 10px;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .brand-logo-img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  flex-shrink: 0;
-  display: block;
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+  display: block !important;
   transition: transform var(--duration-fast) ease, opacity var(--duration-fast) ease;
 }
 
@@ -253,10 +256,11 @@ input, select, textarea {
 
 .brand-title {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 14.5px;
   letter-spacing: 1.2px;
   color: var(--text-primary);
   margin: 0;
+  white-space: nowrap;
 }
 
 .brand-title b {
@@ -272,6 +276,7 @@ input, select, textarea {
   font-weight: 500;
   text-transform: capitalize;
   margin-top: 1px;
+  white-space: nowrap;
 }
 
 .owner-access-link {
@@ -654,32 +659,37 @@ input, select, textarea {
 }
 
 .hero-title-center {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  width: 100% !important;
 }
 
 .hero-title-top {
-  display: block;
+  display: block !important;
+  text-align: center !important;
   font-family: var(--font-heading);
-  font-size: clamp(26px, 7.2vw, 35px);
+  font-size: clamp(24px, 6.8vw, 34px);
   font-weight: 400;
   letter-spacing: -0.3px;
   color: #faf6f0;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+  width: 100% !important;
 }
 
 /* Luxury Metallic Gold Gradient & Shimmer Loop */
 .hero-title-gold {
-  display: block;
+  display: block !important;
+  text-align: center !important;
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: clamp(30px, 8.4vw, 42px);
+  font-size: clamp(28px, 7.8vw, 40px);
   font-weight: 600;
   letter-spacing: 0.3px;
   background: linear-gradient(135deg, #dfba73 0%, #fff2cc 25%, #c89b3c 50%, #fef3c7 75%, #b38226 100%);
@@ -688,6 +698,7 @@ input, select, textarea {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 18px rgba(223, 186, 115, 0.4));
   animation: goldGleamSweep 6s ease-in-out infinite;
+  width: 100% !important;
 }
 
 @keyframes goldGleamSweep {
@@ -732,10 +743,10 @@ input, select, textarea {
 }
 
 .hero-lead-center {
-  text-align: center;
-  max-width: 95%;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center !important;
+  max-width: 92% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .hero-actions {
